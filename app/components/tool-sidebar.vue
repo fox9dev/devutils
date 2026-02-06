@@ -1,191 +1,115 @@
 <script setup lang="ts">
-import type { ToolCategory } from '~/types/tool'
+/**
+ * 工具侧边栏组件
+ * 显示工具列表，支持搜索、按名称排序
+ */
+import type { ToolMeta } from '~/types/tool'
 
-const { t } = useI18n()
-const { getFilteredTools, ToolCategoryInfo: categoryInfo } = useTools()
+const { searchTools } = useTools()
+const { collapsed, toggle } = useSidebar()
+const { activeTab, openTool } = useToolTabs()
 
-const collapsed = defineModel<boolean>('collapsed', { default: false })
+// 搜索关键词
+const searchQuery = ref('')
 
-const searchKeyword = ref('')
-const sortBy = ref<'category' | 'name'>('category')
+// 显示的工具列表：有搜索时用搜索结果并排序，否则用按名称排序的完整列表
+const displayTools = computed(() => searchTools(searchQuery.value))
 
-const route = useRoute()
+// 点击工具
+function handleToolClick(tool: ToolMeta) {
+  openTool(tool.id)
+  navigateTo(`/workspace/${tool.id}`)
+}
 
-// 当前选中的工具 ID
-const currentToolId = computed(() => {
-  const path = route.path
-  if (path.startsWith('/tools/') && path !== '/tools/') {
-    return path.replace('/tools/', '')
-  }
-  return null
-})
-
-// 过滤和排序后的工具
-const filteredTools = computed(() => {
-  return getFilteredTools({
-    keyword: searchKeyword.value,
-    sortBy: sortBy.value
-  })
-})
-
-// 按分类分组的工具
-const groupedTools = computed(() => {
-  if (sortBy.value === 'name') {
-    return null // 按名称排序时不分组
-  }
-
-  const groups = new Map<ToolCategory, typeof filteredTools.value>()
-  for (const tool of filteredTools.value) {
-    if (!groups.has(tool.category)) {
-      groups.set(tool.category, [])
-    }
-    groups.get(tool.category)!.push(tool)
-  }
-  return groups
-})
-
-function toggleSort() {
-  sortBy.value = sortBy.value === 'category' ? 'name' : 'category'
+// 检查工具是否激活
+function isToolActive(toolId: string): boolean {
+  return activeTab.value === toolId
 }
 </script>
 
 <template>
   <aside
-    class="flex h-full flex-col border-r border-gray-200 bg-white transition-all duration-300 dark:border-gray-800 dark:bg-gray-900"
-    :class="collapsed ? 'w-14' : 'w-72'"
+    class="flex flex-col h-full box-content border-r border-default bg-default transition-[width] duration-300 ease-out"
+    :class="collapsed ? 'w-13' : 'w-64'"
   >
-    <!-- Header -->
-    <div class="flex items-center justify-between border-b border-gray-200 p-3 dark:border-gray-800">
-      <template v-if="!collapsed">
-        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ t('sidebar.toolList') }}</span>
-      </template>
-      <UButton
-        :icon="collapsed ? 'i-lucide-panel-left-open' : 'i-lucide-panel-left-close'"
-        variant="ghost"
-        size="xs"
-        color="neutral"
-        :class="collapsed ? 'mx-auto' : ''"
-        @click="collapsed = !collapsed"
-      />
-    </div>
-
-    <!-- Search & Sort -->
+    <!-- 顶部操作栏：统一结构，折叠时只显示居中折叠按钮 -->
     <div
-      v-if="!collapsed"
-      class="space-y-2 border-b border-gray-200 p-3 dark:border-gray-800"
+      class="grid border-b border-default items-center transition-[grid-template-columns] duration-300 ease-out"
+      :class="[
+        collapsed ? 'grid-cols-1 gap-0 p-2' : 'grid-cols-[1fr_auto] gap-2 p-2'
+      ]"
     >
-      <UInput
-        v-model="searchKeyword"
-        :placeholder="t('sidebar.searchTools')"
-        icon="i-lucide-search"
-        size="sm"
-        class="w-full"
-      />
-      <div class="flex items-center justify-between">
-        <span class="text-xs text-gray-500">
-          {{ sortBy === 'category' ? t('sidebar.byCategory') : t('sidebar.byName') }}
-        </span>
+      <div
+        v-show="!collapsed"
+        class="min-w-0 overflow-hidden"
+      >
+        <UInput
+          v-model="searchQuery"
+          placeholder="搜索工具..."
+          class="w-full"
+          icon="lucide:search"
+        />
+      </div>
+      <div
+        class="flex shrink-0 transition-[justify-content] duration-300 ease-out"
+        :class="collapsed ? 'justify-center' : 'justify-end'"
+      >
         <UButton
-          :icon="sortBy === 'category' ? 'i-lucide-folder' : 'i-lucide-arrow-down-a-z'"
-          variant="ghost"
-          size="xs"
           color="neutral"
-          @click="toggleSort"
+          variant="ghost"
+          :icon="collapsed ? 'lucide:panel-left-open' : 'lucide:panel-left-close'"
+          :aria-label="collapsed ? '展开侧边栏' : '折叠侧边栏'"
+          @click="toggle"
         />
       </div>
     </div>
 
-    <!-- Tool List -->
-    <nav class="flex-1 overflow-y-auto p-2">
-      <!-- Grouped by Category -->
-      <template v-if="groupedTools && !collapsed">
-        <div
-          v-for="[category, tools] in groupedTools"
-          :key="category"
-          class="mb-4"
+    <!-- 工具列表：统一结构，仅文字做透明度过渡，图标始终保留 -->
+    <div class="flex-1 overflow-y-auto min-h-0">
+      <div class="flex flex-col p-2 gap-1">
+        <UTooltip
+          v-for="tool in displayTools"
+          :key="tool.id"
+          :text="tool.name"
+          :delay-duration="100"
         >
-          <div class="mb-2 flex items-center gap-1.5 px-2 text-xs font-medium text-gray-500 dark:text-gray-400">
+          <div
+            class="p-2 flex items-center rounded-lg text-sm transition-[color,background-color] duration-300"
+            :class="[
+              collapsed ? 'mx-0' : 'text-left min-w-0',
+              isToolActive(tool.id)
+                ? 'bg-primary-500 text-white'
+                : 'text-muted hover:bg-elevated hover:text-default'
+            ]"
+            @click="handleToolClick(tool)"
+          >
             <UIcon
-              :name="categoryInfo[category].icon"
-              class="size-3"
+              :name="tool.icon"
+              class="w-5 h-5 shrink-0"
             />
-            <span>{{ categoryInfo[category].label }}</span>
-          </div>
-          <div class="space-y-0.5">
-            <NuxtLink
-              v-for="tool in tools"
-              :key="tool.id"
-              :to="`/tools/${tool.id}`"
-              class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors"
-              :class="currentToolId === tool.id
-                ? 'bg-primary-100 text-primary-700 dark:bg-primary-950 dark:text-primary-300'
-                : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'"
+            <span
+              class="truncate min-w-0 overflow-hidden transition-[opacity,max-width,margin] duration-300 ease-out"
+              :class="collapsed ? 'opacity-0 max-w-0 ml-0' : 'opacity-100 max-w-40 ml-2'"
             >
-              <UIcon
-                :name="tool.icon"
-                class="size-4 shrink-0"
-              />
-              <span class="truncate">{{ tool.name }}</span>
-            </NuxtLink>
+              {{ tool.name }}
+            </span>
           </div>
-        </div>
-      </template>
+        </UTooltip>
 
-      <!-- Flat list (by name) -->
-      <template v-else-if="!collapsed">
-        <div class="space-y-0.5">
-          <NuxtLink
-            v-for="tool in filteredTools"
-            :key="tool.id"
-            :to="`/tools/${tool.id}`"
-            class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors"
-            :class="currentToolId === tool.id
-              ? 'bg-primary-100 text-primary-700 dark:bg-primary-950 dark:text-primary-300'
-              : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'"
-          >
-            <UIcon
-              :name="tool.icon"
-              class="size-4 shrink-0"
-            />
-            <span class="truncate">{{ tool.name }}</span>
-          </NuxtLink>
+        <!-- 空状态（仅展开时显示） -->
+        <div
+          v-if="!collapsed && searchQuery && displayTools.length === 0"
+          class="flex flex-col items-center justify-center gap-2 p-4 text-center"
+        >
+          <UIcon
+            name="lucide:search-x"
+            class="w-8 h-8 text-muted"
+          />
+          <p class="text-sm text-muted">
+            没有找到匹配的工具
+          </p>
         </div>
-      </template>
-
-      <!-- Collapsed: Icon only -->
-      <template v-else>
-        <div class="space-y-1">
-          <NuxtLink
-            v-for="tool in filteredTools"
-            :key="tool.id"
-            :to="`/tools/${tool.id}`"
-            class="flex items-center justify-center rounded-lg p-2 transition-colors"
-            :class="currentToolId === tool.id
-              ? 'bg-primary-100 text-primary-700 dark:bg-primary-950 dark:text-primary-300'
-              : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800'"
-            :title="tool.name"
-          >
-            <UIcon
-              :name="tool.icon"
-              class="size-5"
-            />
-          </NuxtLink>
-        </div>
-      </template>
-
-      <!-- Empty State -->
-      <div
-        v-if="filteredTools.length === 0 && !collapsed"
-        class="flex flex-col items-center justify-center py-8 text-center"
-      >
-        <UIcon
-          name="i-lucide-search-x"
-          class="mb-2 size-8 text-gray-300 dark:text-gray-600"
-        />
-        <p class="text-sm text-gray-500">
-          {{ t('sidebar.noToolsFound') }}
-        </p>
       </div>
-    </nav>
+    </div>
   </aside>
 </template>

@@ -1,98 +1,155 @@
 <script setup lang="ts">
-const { tabs, activeTabKey, closeTab, activateTab } = useToolTabs()
-const { getToolById } = useTools()
+/**
+ * 工具标签页组件
+ * 显示已打开的工具标签，支持切换和关闭；右键菜单使用 Nuxt UI ContextMenu：关闭当前/其他/左侧/右侧/全部
+ */
 
-const router = useRouter()
-const route = useRoute()
+const { openTabs, activeTab, switchTab, closeTool, closeOtherTabs, closeLeftTabs, closeRightTabs, closeAllTabs } = useToolTabs()
+const { getTool } = useTools()
 
-// 同步路由与标签页状态
-watch(() => route.path, (path) => {
-  if (path.startsWith('/tools/') && path !== '/tools/') {
-    const toolId = path.replace('/tools/', '')
-    const tool = getToolById(toolId)
-    if (tool) {
-      // 检查是否已有该工具的标签页
-      const existingTab = tabs.value.find(t => t.toolId === toolId)
-      if (!existingTab) {
-        // 创建新标签页
-        tabs.value.push({
-          toolId,
-          key: `${toolId}-${Date.now()}`,
-          title: tool.name
-        })
-      }
-      // 激活对应标签页
-      const tab = tabs.value.find(t => t.toolId === toolId)
-      if (tab) {
-        activeTabKey.value = tab.key
-      }
-    }
-  }
-}, { immediate: true })
+function getTabInfo(toolId: string) {
+  return getTool(toolId)
+}
 
-function handleCloseTab(event: MouseEvent, key: string) {
-  event.preventDefault()
+function handleTabClick(toolId: string) {
+  switchTab(toolId)
+  navigateTo(`/workspace/${toolId}`)
+}
+
+function handleCloseTab(event: MouseEvent, toolId: string) {
   event.stopPropagation()
+  closeTool(toolId)
+  navigateAfterClose()
+}
 
-  const tabIndex = tabs.value.findIndex(t => t.key === key)
+// 与 workspace 布局中标签栏 leave 过渡时长一致，避免先收标签栏再跳转导致抖动
+const TAB_BAR_LEAVE_MS = 160
 
-  closeTab(key)
-
-  // 如果关闭的是当前激活的标签页，导航到其他标签页
-  if (tabs.value.length > 0 && activeTabKey.value !== key) {
-    // 已经有其他激活的标签页
-  } else if (tabs.value.length > 0) {
-    // 激活相邻标签页并导航
-    const newIndex = Math.min(tabIndex, tabs.value.length - 1)
-    const newTab = tabs.value[newIndex]
-    if (newTab) {
-      activeTabKey.value = newTab.key
-      router.push(`/tools/${newTab.toolId}`)
-    }
+function navigateAfterClose() {
+  if (openTabs.value.length > 0 && activeTab.value) {
+    navigateTo(`/workspace/${activeTab.value}`)
   } else {
-    // 没有标签页了，返回工具首页
-    router.push('/tools')
+    // 等标签栏离开动画完成后再跳转，避免头部抖动与两段式突兀消失
+    setTimeout(() => navigateTo('/workspace'), TAB_BAR_LEAVE_MS)
   }
 }
 
-function handleTabClick(tab: typeof tabs.value[0]) {
-  activateTab(tab.key)
-  router.push(`/tools/${tab.toolId}`)
+function canCloseLeft(toolId: string) {
+  const index = openTabs.value.indexOf(toolId)
+  return index > 0
+}
+
+function canCloseRight(toolId: string) {
+  const index = openTabs.value.indexOf(toolId)
+  return index >= 0 && index < openTabs.value.length - 1
+}
+
+function getContextItems(toolId: string) {
+  return [
+    [
+      {
+        label: '关闭当前',
+        icon: 'i-lucide-x',
+        onSelect() {
+          closeTool(toolId)
+          navigateAfterClose()
+        }
+      },
+      {
+        label: '关闭其他',
+        icon: 'i-lucide-panel-right-close',
+        onSelect() {
+          closeOtherTabs(toolId)
+          navigateAfterClose()
+        }
+      },
+      {
+        label: '关闭左侧',
+        icon: 'i-lucide-chevrons-left',
+        disabled: !canCloseLeft(toolId),
+        onSelect() {
+          closeLeftTabs(toolId)
+          navigateAfterClose()
+        }
+      },
+      {
+        label: '关闭右侧',
+        icon: 'i-lucide-chevrons-right',
+        disabled: !canCloseRight(toolId),
+        onSelect() {
+          closeRightTabs(toolId)
+          navigateAfterClose()
+        }
+      }
+    ],
+    [
+      {
+        label: '关闭所有',
+        icon: 'i-lucide-trash-2',
+        color: 'error' as const,
+        onSelect() {
+          closeAllTabs()
+          navigateAfterClose()
+        }
+      }
+    ]
+  ]
 }
 </script>
 
 <template>
-  <div
-    v-if="tabs.length > 0"
-    class="flex items-center gap-1 border-b border-gray-200 bg-gray-50 px-2 dark:border-gray-800 dark:bg-gray-900"
-  >
-    <div class="flex flex-1 items-center gap-1 overflow-x-auto py-1">
-      <div
-        v-for="tab in tabs"
-        :key="tab.key"
-        class="group flex shrink-0 cursor-pointer items-center gap-2 rounded-t-lg border border-b-0 px-3 py-1.5 text-sm transition-colors"
-        :class="activeTabKey === tab.key
-          ? 'border-gray-200 bg-white text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-white'
-          : 'border-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white'"
-        @click="handleTabClick(tab)"
+  <div class="flex items-center border-b border-default bg-default overflow-x-auto p-2">
+    <TransitionGroup
+      tag="div"
+      class="flex items-center gap-1 w-full relative"
+      move-class="transition-transform duration-150 ease-out"
+      enter-active-class="transition-all duration-200 ease-out"
+      enter-from-class="opacity-0 scale-90"
+      enter-to-class="opacity-100 scale-100"
+      leave-active-class="transition-all duration-150 ease-in absolute"
+      leave-from-class="opacity-100 scale-100"
+      leave-to-class="opacity-0 scale-90"
+    >
+      <UContextMenu
+        v-for="toolId in openTabs"
+        :key="toolId"
+        :items="getContextItems(toolId)"
+        :ui="{ content: 'min-w-40' }"
+        class="flex shrink-0"
       >
-        <UIcon
-          v-if="getToolById(tab.toolId)?.icon"
-          :name="getToolById(tab.toolId)?.icon ?? ''"
-          class="size-4"
-        />
-        <span class="max-w-32 truncate">{{ tab.title }}</span>
-        <button
-          class="ml-1 rounded p-0.5 opacity-0 transition-opacity hover:bg-gray-200 group-hover:opacity-100 dark:hover:bg-gray-700"
-          :class="activeTabKey === tab.key ? 'opacity-100' : ''"
-          @click="handleCloseTab($event, tab.key)"
+        <div
+          role="button"
+          tabindex="0"
+          class="group flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors whitespace-nowrap cursor-pointer"
+          :class="[
+            activeTab === toolId
+              ? 'bg-primary-500/10 text-primary-500'
+              : 'bg-elevated/60 text-default hover:bg-elevated'
+          ]"
+          @click="handleTabClick(toolId)"
+          @keydown.enter="handleTabClick(toolId)"
         >
           <UIcon
-            name="i-lucide-x"
-            class="size-3"
+            v-if="getTabInfo(toolId)"
+            :name="getTabInfo(toolId)!.icon"
+            class="w-4 h-4 shrink-0"
           />
-        </button>
-      </div>
-    </div>
+          <span>{{ getTabInfo(toolId)?.name || toolId }}</span>
+          <span
+            role="button"
+            tabindex="0"
+            class="flex items-center justify-center w-4 h-4 rounded opacity-0 group-hover:opacity-100 hover:bg-elevated transition-opacity"
+            :class="activeTab === toolId ? 'hover:bg-primary-500/20' : ''"
+            @click="handleCloseTab($event, toolId)"
+            @keydown.enter.stop="handleCloseTab($event, toolId)"
+          >
+            <UIcon
+              name="lucide:x"
+              class="w-3 h-3"
+            />
+          </span>
+        </div>
+      </UContextMenu>
+    </TransitionGroup>
   </div>
 </template>

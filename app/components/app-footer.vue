@@ -1,58 +1,58 @@
 <script setup lang="ts">
-const currentYear = new Date().getFullYear()
+import dayjs from 'dayjs'
+
+/**
+ * 页脚组件
+ * 包含版权信息、作者信息、友情链接
+ */
+
+const currentYear = dayjs().year()
 
 const links = [
-  { label: '首页', to: '/' },
-  { label: '工具', to: '/tools' },
-  { label: 'GitHub', to: 'https://github.com', external: true }
+  { label: 'GitHub', href: 'https://github.com/fox9dev/devutils', icon: 'simple-icons:github' },
+  { label: '反馈建议', href: 'https://github.com/fox9dev/devutils/issues', icon: 'lucide:message-circle' }
 ]
 </script>
 
 <template>
-  <footer class="border-t border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900">
-    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <!-- Logo & Copyright -->
-        <div class="flex items-center gap-4">
-          <NuxtLink
-            to="/"
-            class="flex items-center gap-2"
-          >
-            <UIcon
-              name="i-lucide-code-2"
-              class="size-6 text-primary-500"
-            />
-            <span class="font-semibold text-gray-900 dark:text-white">DevUtils</span>
-          </NuxtLink>
-          <span class="text-sm text-gray-500 dark:text-gray-400">
-            © {{ currentYear }} DevUtils. All rights reserved.
-          </span>
+  <footer class="border-t border-default bg-default">
+    <div class="container mx-auto px-4 py-8 transition-all">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <!-- 版权信息 -->
+        <div class="flex items-center gap-2 text-sm text-muted">
+          <UIcon
+            name="lucide:terminal"
+            class="h-4 w-4 text-primary-500"
+          />
+          <span>© {{ currentYear }} DevUtils. All rights reserved.</span>
         </div>
 
-        <!-- Links -->
-        <nav class="flex items-center gap-4">
-          <template
+        <!-- 隐私说明 -->
+        <div class="flex items-center gap-1.5 text-xs text-muted">
+          <UIcon
+            name="lucide:shield-check"
+            class="h-3.5 w-3.5 text-green-500"
+          />
+          <span>所有数据在本地处理，不会上传至服务器</span>
+        </div>
+
+        <!-- 链接 -->
+        <div class="flex items-center gap-3">
+          <a
             v-for="link in links"
-            :key="link.to"
+            :key="link.href"
+            :href="link.href"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center gap-1.5 text-sm text-muted hover:text-default transition-colors"
           >
-            <NuxtLink
-              v-if="!link.external"
-              :to="link.to"
-              class="text-sm text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-            >
-              {{ link.label }}
-            </NuxtLink>
-            <a
-              v-else
-              :href="link.to"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-sm text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-            >
-              {{ link.label }}
-            </a>
-          </template>
-        </nav>
+            <UIcon
+              :name="link.icon"
+              class="h-4 w-4"
+            />
+            <span class="hidden sm:inline">{{ link.label }}</span>
+          </a>
+        </div>
       </div>
     </div>
   </footer>

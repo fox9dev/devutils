@@ -48,10 +48,19 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  ui: {
+    fonts: false,
+    theme: {
+      defaultVariants: {
+        size: 'lg'
+      }
+    }
+  },
+
   routeRules: {
     '/': { prerender: true },
     '/tools': { prerender: true },
-    '/tools/**': { ssr: false }
+    '/workspace/**': { ssr: false }
   },
 
   compatibilityDate: '2025-01-15',
@@ -62,22 +71,6 @@ export default defineNuxtConfig({
         commaDangle: 'never',
         braceStyle: '1tbs'
       }
-    }
-  },
-
-  i18n: {
-    locales: [
-      { code: 'zh-CN', name: '简体中文', file: 'zh-CN.json' },
-      { code: 'en', name: 'English', file: 'en.json' }
-    ],
-    defaultLocale: 'zh-CN',
-    langDir: './locales',
-    strategy: 'no_prefix',
-    vueI18n: './i18n.config.ts',
-    detectBrowserLanguage: {
-      useCookie: true,
-      cookieKey: 'i18n_locale',
-      fallbackLocale: 'zh-CN'
     }
   }
 })
