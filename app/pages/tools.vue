@@ -7,6 +7,14 @@ definePageMeta({ layout: 'default' })
 
 const { searchTools } = useTools()
 
+const input = useTemplateRef('input')
+
+defineShortcuts({
+  '/': () => {
+    input.value?.inputRef?.focus()
+  }
+})
+
 // 搜索关键词
 const searchQuery = ref('')
 
@@ -33,11 +41,16 @@ function clearSearch() {
     <!-- 搜索 -->
     <div class="flex flex-col sm:flex-row gap-4 mb-8">
       <UInput
-        v-model.lazy="searchQuery"
+        ref="input"
+        v-model="searchQuery"
         placeholder="搜索工具..."
         icon="lucide:search"
         class="flex-1"
-      />
+      >
+        <template #trailing>
+          <UKbd value="/" />
+        </template>
+      </UInput>
     </div>
 
     <!-- 工具列表 -->

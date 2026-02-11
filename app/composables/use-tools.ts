@@ -13,24 +13,18 @@ export function useTools() {
       .getRoutes()
       .filter(route => route.meta?.tool)
       .map(route => route.meta.tool as ToolMeta)
+      .sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'))
   )
-
-  // 按名称排序的工具
-  const toolsSortedByName = computed(() => {
-    return [...tools.value].sort((a, b) =>
-      a.name.localeCompare(b.name, 'zh-CN')
-    )
-  })
 
   // 搜索工具
   function searchTools(query: string): ToolMeta[] {
     if (!query || query.trim() === '') {
-      return toolsSortedByName.value
+      return tools.value
     }
 
     const q = query.toLowerCase().trim()
 
-    return toolsSortedByName.value.filter((tool) => {
+    return tools.value.filter((tool) => {
       if (tool.name.toLowerCase().includes(q)) return true
       if (tool.description.toLowerCase().includes(q)) return true
       if (tool.id.toLowerCase().includes(q)) return true
@@ -51,7 +45,6 @@ export function useTools() {
 
   return {
     tools,
-    toolsSortedByName,
     searchTools,
     getTool,
     hasToolById

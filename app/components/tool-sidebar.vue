@@ -3,28 +3,29 @@
  * 工具侧边栏组件
  * 显示工具列表，支持搜索、按名称排序
  */
-import type { ToolMeta } from '~/types/tool'
 
 const { searchTools } = useTools()
 const { collapsed, toggle } = useSidebar()
-const { activeTab, openTool } = useToolTabs()
+const { isToolActive, openTool } = useToolTabs()
+
+const input = useTemplateRef('input')
+
+defineShortcuts({
+  '/': () => {
+    if (collapsed.value) {
+      toggle()
+    }
+    nextTick(() => {
+      input.value?.inputRef?.focus()
+    })
+  }
+})
 
 // 搜索关键词
 const searchQuery = ref('')
 
 // 显示的工具列表：有搜索时用搜索结果并排序，否则用按名称排序的完整列表
 const displayTools = computed(() => searchTools(searchQuery.value))
-
-// 点击工具
-function handleToolClick(tool: ToolMeta) {
-  openTool(tool.id)
-  navigateTo(`/workspace/${tool.id}`)
-}
-
-// 检查工具是否激活
-function isToolActive(toolId: string): boolean {
-  return activeTab.value === toolId
-}
 </script>
 
 <template>
@@ -44,11 +45,16 @@ function isToolActive(toolId: string): boolean {
         class="min-w-0 overflow-hidden"
       >
         <UInput
+          ref="input"
           v-model="searchQuery"
           placeholder="搜索工具..."
           class="w-full"
           icon="lucide:search"
-        />
+        >
+          <template #trailing>
+            <UKbd value="/" />
+          </template>
+        </UInput>
       </div>
       <div
         class="flex shrink-0 transition-[justify-content] duration-300 ease-out"
@@ -71,7 +77,8 @@ function isToolActive(toolId: string): boolean {
           v-for="tool in displayTools"
           :key="tool.id"
           :text="tool.name"
-          :delay-duration="100"
+          :content="{ side: 'right' }"
+          :delay-duration="150"
         >
           <div
             class="p-2 flex items-center rounded-lg text-sm transition-[color,background-color] duration-300"
@@ -81,7 +88,7 @@ function isToolActive(toolId: string): boolean {
                 ? 'bg-primary-500 text-white'
                 : 'text-muted hover:bg-elevated hover:text-default'
             ]"
-            @click="handleToolClick(tool)"
+            @click="openTool(tool.id)"
           >
             <UIcon
               :name="tool.icon"

@@ -14,7 +14,6 @@ const { openTool } = useToolTabs()
 // 点击卡片时打开工具
 function handleClick() {
   openTool(props.tool.id)
-  navigateTo(`/workspace/${props.tool.id}`)
 }
 </script>
 

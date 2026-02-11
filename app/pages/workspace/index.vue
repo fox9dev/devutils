@@ -8,15 +8,6 @@
 definePageMeta({
   layout: 'workspace'
 })
-
-const { activeTab } = useToolTabs()
-
-// 如果有已激活的工具，自动跳转
-watchEffect(() => {
-  if (activeTab.value) {
-    navigateTo(`/workspace/${activeTab.value}`, { replace: true })
-  }
-})
 </script>
 
 <template>

@@ -1,8 +1,11 @@
 <script setup lang="ts">
 /**
  * 顶部导航栏组件
- * 包含 Logo、导航菜单、主题切换、GitHub 链接
+ * 包含 Logo、导航菜单、主题切换、搜索、GitHub 链接
  */
+import type { CommandPaletteGroup } from '@nuxt/ui'
+import type { ToolMeta } from '~/types/tool'
+import { useMagicKeys, whenever } from '@vueuse/core'
 
 enum Theme {
   Light = 'light',
@@ -12,10 +15,56 @@ enum Theme {
 const colorMode = useColorMode()
 
 const route = useRoute()
+const { searchTools } = useTools()
+const { openTool } = useToolTabs()
+
+// 搜索弹窗开关（用于图标点击与快捷键）
+const searchOpen = ref(false)
+// 搜索关键词（与 CommandPalette 双向绑定，用 searchTools 过滤，支持 keywords 检索但不展示）
+const searchTerm = ref('')
+
+// 用 searchTools 过滤（含 name/description/id/keywords），列表只展示 name、description、icon，不展示 keywords
+const commandGroups = computed<CommandPaletteGroup[]>(() => [
+  {
+    id: 'tools',
+    ignoreFilter: true, // 禁用内置 Fuse 过滤，由 searchTools 统一过滤
+    items: searchTools(searchTerm.value).map((tool: ToolMeta) => ({
+      id: tool.id,
+      label: tool.name,
+      suffix: tool.description,
+      icon: tool.icon,
+      onSelect() {
+        searchOpen.value = false
+        openTool(tool.id)
+      }
+    }))
+  }
+])
+
+// 多平台快捷键：Mac 用 Cmd+K，Windows/Linux 用 Ctrl+K
+const keys = useMagicKeys({
+  passive: false,
+  onEventFired(e) {
+    if (
+      (e.metaKey || e.ctrlKey)
+      && e.key === 'k'
+      && e.type === 'keydown'
+    ) {
+      e.preventDefault()
+    }
+  }
+})
+const metaK = keys['Meta+K']
+const ctrlK = keys['Ctrl+K']
+whenever(() => metaK?.value === true, () => {
+  searchOpen.value = true
+})
+whenever(() => ctrlK?.value === true, () => {
+  searchOpen.value = true
+})
 
 // 导航菜单项
 const navItems = [
-  { label: '首页', to: '/', icon: 'lucide:home' },
   { label: '工具', to: '/tools', icon: 'lucide:wrench' },
   { label: '工作区', to: '/workspace', icon: 'lucide:layout-dashboard' }
 ]
@@ -84,8 +133,17 @@ const mobileMenuOpen = ref(false)
 
       <!-- 右侧操作区 -->
       <div class="flex items-center gap-2">
-        <!-- 主题切换 -->
+        <!-- 搜索：点击或 Cmd/Ctrl+K 打开 -->
+        <UButton
+          variant="ghost"
+          size="lg"
+          icon="lucide:search"
+          aria-label="搜索工具"
+          class="cursor-pointer"
+          @click="searchOpen = true"
+        />
 
+        <!-- 主题切换 -->
         <UButton
           variant="ghost"
           size="lg"
@@ -154,5 +212,25 @@ const mobileMenuOpen = ref(false)
         </div>
       </nav>
     </Transition>
+
+    <!-- 搜索工具弹窗：UModal + UCommandPalette，支持 Cmd/Ctrl+K -->
+    <UModal
+      v-model:open="searchOpen"
+      description="搜索工具"
+      title="搜索工具"
+      :ui="{ content: 'max-w-3xl p-0 overflow-hidden', body: 'p-0' }"
+    >
+      <template #content>
+        <UCommandPalette
+          v-model:open="searchOpen"
+          v-model:search-term="searchTerm"
+          :groups="commandGroups"
+          placeholder="搜索工具..."
+          icon="lucide:search"
+          close
+          class="h-[50vh] border-0 shadow-none"
+        />
+      </template>
+    </UModal>
   </header>
 </template>

@@ -48,7 +48,6 @@ const downloads = [
 // 跳转到工具
 function goToTool(toolId: string) {
   openTool(toolId)
-  navigateTo(`/workspace/${toolId}`)
 }
 </script>
 
@@ -73,13 +72,16 @@ function goToTool(toolId: string) {
           <!-- 副标题 -->
           <p class="text-lg md:text-xl text-[var(--ui-text-muted)] mb-8">
             一站式开发工具集合，JSON 格式化、Base64 编解码、URL 编解码、时间戳转换等常用工具。
-            <br class="hidden md:block" />
+            <br class="hidden md:block">
             本地运行，隐私安全，离线可用。
           </p>
 
           <!-- 隐私说明 -->
           <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 text-sm mb-8">
-            <UIcon name="lucide:shield-check" class="w-4 h-4" />
+            <UIcon
+              name="lucide:shield-check"
+              class="w-4 h-4"
+            />
             <span>所有数据在本地处理，不会上传至服务器</span>
           </div>
 
@@ -120,10 +122,17 @@ function goToTool(toolId: string) {
             class="flex flex-col items-center text-center p-6 rounded-2xl bg-[var(--ui-bg)] border border-[var(--ui-border)]"
           >
             <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-primary-500/10 text-primary-500 mb-4">
-              <UIcon :name="feature.icon" class="w-6 h-6" />
+              <UIcon
+                :name="feature.icon"
+                class="w-6 h-6"
+              />
             </div>
-            <h3 class="text-lg font-semibold text-[var(--ui-text)] mb-2">{{ feature.title }}</h3>
-            <p class="text-sm text-[var(--ui-text-muted)]">{{ feature.description }}</p>
+            <h3 class="text-lg font-semibold text-[var(--ui-text)] mb-2">
+              {{ feature.title }}
+            </h3>
+            <p class="text-sm text-[var(--ui-text-muted)]">
+              {{ feature.description }}
+            </p>
           </div>
         </div>
       </div>
@@ -177,7 +186,10 @@ function goToTool(toolId: string) {
               :disabled="download.disabled"
             >
               {{ download.label }}
-              <span v-if="download.disabled" class="text-xs opacity-60 ml-1">(敬请期待)</span>
+              <span
+                v-if="download.disabled"
+                class="text-xs opacity-60 ml-1"
+              >(敬请期待)</span>
             </UButton>
           </div>
         </div>
