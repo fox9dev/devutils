@@ -28,6 +28,17 @@ const error = ref('')
 // 自动处理
 const autoProcess = ref(true)
 
+// 历史记录
+const { save: saveHistory } = useToolHistory('base64-codec', {
+  onRestore(record) {
+    autoProcess.value = false
+    mode.value = record.config.mode ?? 'encode'
+    input.value = record.input
+    output.value = record.output
+    nextTick(() => { autoProcess.value = record.config.autoProcess ?? true })
+  }
+})
+
 // 处理函数
 function process() {
   if (!input.value) {
@@ -46,6 +57,7 @@ function process() {
       // 解码：支持 Unicode
       output.value = decodeURIComponent(escape(atob(input.value)))
     }
+    saveHistory(input.value, output.value, { mode: mode.value, autoProcess: autoProcess.value })
   } catch (e) {
     error.value = mode.value === 'encode' ? '编码失败' : '解码失败，请检查输入是否为有效的 Base64 字符串'
     output.value = ''

@@ -31,6 +31,18 @@ const error = ref('')
 // 自动处理
 const autoProcess = ref(true)
 
+// 历史记录
+const { save: saveHistory } = useToolHistory('url-codec', {
+  onRestore(record) {
+    autoProcess.value = false
+    mode.value = record.config.mode ?? 'encode'
+    encodeType.value = record.config.encodeType ?? 'component'
+    input.value = record.input
+    output.value = record.output
+    nextTick(() => { autoProcess.value = record.config.autoProcess ?? true })
+  }
+})
+
 // 处理函数
 function process() {
   if (!input.value) {
@@ -55,6 +67,7 @@ function process() {
         output.value = decodeURIComponent(input.value)
       }
     }
+    saveHistory(input.value, output.value, { mode: mode.value, encodeType: encodeType.value, autoProcess: autoProcess.value })
   } catch (e) {
     error.value = e instanceof Error ? e.message : '处理失败'
     output.value = ''

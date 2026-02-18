@@ -40,6 +40,17 @@ onUnmounted(() => {
 // 时间戳单位
 const unit = ref<'seconds' | 'milliseconds'>('seconds')
 
+// 历史记录
+const { save: saveHistory } = useToolHistory('timestamp', {
+  onRestore(record) {
+    unit.value = record.config.unit ?? 'seconds'
+    timestampInput.value = record.input.timestampInput ?? ''
+    dateInput.value = record.input.dateInput ?? ''
+    timestampResult.value = record.output.timestampResult ?? ''
+    dateResult.value = record.output.dateResult ?? ''
+  }
+})
+
 // 时间戳输入
 const timestampInput = ref('')
 const timestampError = ref('')
@@ -77,6 +88,11 @@ function convertTimestampToDate() {
     }
 
     timestampResult.value = date.format('YYYY-MM-DD HH:mm:ss')
+    saveHistory(
+      { timestampInput: timestampInput.value, dateInput: '' },
+      { timestampResult: timestampResult.value, dateResult: '' },
+      { unit: unit.value }
+    )
   } catch (e) {
     timestampError.value = e instanceof Error ? e.message : '转换失败'
     timestampResult.value = ''
@@ -103,6 +119,11 @@ function convertDateToTimestamp() {
     dateResult.value = unit.value === 'seconds'
       ? Math.floor(ts / 1000).toString()
       : ts.toString()
+    saveHistory(
+      { timestampInput: '', dateInput: dateInput.value },
+      { timestampResult: '', dateResult: dateResult.value },
+      { unit: unit.value }
+    )
   } catch (e) {
     dateError.value = e instanceof Error ? e.message : '转换失败'
     dateResult.value = ''

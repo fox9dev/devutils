@@ -23,6 +23,15 @@ const output = ref('')
 const error = ref('')
 const isProcessing = ref(false)
 
+// 历史记录
+const { save: saveHistory } = useToolHistory('json-formatter', {
+  onRestore(record) {
+    indentSize.value = record.config.indentSize ?? 2
+    input.value = record.input
+    output.value = record.output
+  }
+})
+
 // 配置选项
 const indentSize = ref(2)
 const indentOptions = [
@@ -46,6 +55,7 @@ function formatJSON() {
     const parsed = JSON.parse(input.value)
     const indent = typeof indentSize.value === 'number' ? indentSize.value : indentSize.value
     output.value = JSON.stringify(parsed, null, indent)
+    saveHistory(input.value, output.value, { indentSize: indentSize.value })
   } catch (e) {
     error.value = e instanceof Error ? e.message : '无效的 JSON 格式'
     output.value = ''
@@ -68,6 +78,7 @@ function minifyJSON() {
   try {
     const parsed = JSON.parse(input.value)
     output.value = JSON.stringify(parsed)
+    saveHistory(input.value, output.value, { indentSize: indentSize.value })
   } catch (e) {
     error.value = e instanceof Error ? e.message : '无效的 JSON 格式'
     output.value = ''

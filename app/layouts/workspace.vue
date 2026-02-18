@@ -14,6 +14,8 @@ onMounted(() => {
     openTool(tool.id, { navigate: false })
   }
 })
+
+useToolHistoryProvider()
 </script>
 
 <template>
@@ -31,7 +33,8 @@ onMounted(() => {
             v-if="openTabs.length"
             class="shrink-0 overflow-hidden"
           >
-            <ToolTabs />
+            <ToolTabs class="flex-1 min-w-0" />
+            <ToolHistory class="flex-1 min-w-0" />
           </div>
         </Transition>
 

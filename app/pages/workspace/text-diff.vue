@@ -24,6 +24,15 @@ const textB = ref('')
 // 对比模式
 const diffMode = ref<'lines' | 'words' | 'chars'>('lines')
 
+// 历史记录
+const { save: saveHistory } = useToolHistory('text-diff', {
+  onRestore(record) {
+    diffMode.value = record.config.diffMode ?? 'lines'
+    textA.value = record.input.textA ?? ''
+    textB.value = record.input.textB ?? ''
+  }
+})
+
 // 对比结果
 const diffResult = computed(() => {
   if (!textA.value && !textB.value) {
@@ -69,6 +78,10 @@ function clear() {
 
 // 交换
 function swap() {
+  // 保存当前状态到历史
+  if (textA.value || textB.value) {
+    saveHistory({ textA: textA.value, textB: textB.value }, '', { diffMode: diffMode.value })
+  }
   const temp = textA.value
   textA.value = textB.value
   textB.value = temp
