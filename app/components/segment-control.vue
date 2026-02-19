@@ -1,4 +1,6 @@
 <script setup lang="ts" generic="T">
+import { useResizeObserver } from '@vueuse/core'
+
 /**
  * 分段控制器组件
  * 用于在多个互斥选项中进行切换，带有滑动动画
@@ -55,14 +57,11 @@ const sizeClasses = computed(() => sizeMap[props.size])
 
 // 引用项
 const itemRefs = ref<HTMLElement[]>([])
+const rootRef = ref<HTMLElement>()
 const activeIndex = computed(() => props.options.findIndex(opt => opt.value === props.modelValue))
 
 // 滑动块样式
 const indicatorStyle = ref<Record<string, string>>({})
-
-function loopUpdate() {
-  requestAnimationFrame(updateIndicator)
-}
 
 function updateIndicator() {
   const index = activeIndex.value
@@ -87,16 +86,16 @@ watch(() => props.modelValue, () => {
 onMounted(async () => {
   await nextTick() // 确保 DOM 渲染完成
   updateIndicator()
-  window.addEventListener('resize', loopUpdate)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', loopUpdate)
+  // 使用 useResizeObserver 监听容器尺寸变化
+  useResizeObserver(rootRef, () => {
+    updateIndicator()
+  })
 })
 </script>
 
 <template>
   <div
+    ref="rootRef"
     class="relative inline-flex bg-elevated rounded-lg border border-default"
     :class="sizeClasses.wrapper"
   >

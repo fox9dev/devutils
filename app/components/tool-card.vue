@@ -19,7 +19,7 @@ function handleClick() {
 
 <template>
   <div
-    class="group relative flex flex-col gap-3 p-4 rounded-xl border border-default bg-default hover:bg-elevated hover:border-primary-500/50 hover:shadow-lg hover:shadow-primary-500/5 transition-all duration-200"
+    class="group relative flex flex-col gap-3 p-4 rounded-xl border border-default bg-default hover:bg-elevated hover:border-primary-500/50 hover:shadow-lg hover:shadow-primary-500/5 transition-all duration-200 cursor-pointer"
     @click="handleClick"
   >
     <!-- 图标 -->

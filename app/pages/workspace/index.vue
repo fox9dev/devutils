@@ -11,6 +11,15 @@ definePageMeta({
   layout: 'workspace'
 })
 
+// SEO 元信息
+useSeoMeta({
+  title: '工作区',
+  description: 'DevUtils 工作区，从左侧工具栏选择工具开始使用。支持 JSON 格式化、Base64 编解码、URL 编解码、文本对比、时间戳转换。',
+  ogTitle: 'DevUtils - 工作区',
+  ogDescription: 'DevUtils 工作区，多款开发工具集中一处，即开即用。',
+  ogUrl: 'https://devutils.fox9.dev/workspace'
+})
+
 onMounted(() => {
   if (activeTab.value) {
     openTool(activeTab.value)

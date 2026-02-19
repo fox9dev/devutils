@@ -21,7 +21,7 @@ watch(activeTab, () => {
 
 const openTools = computed(() => openTabs.value.map(id => getTool(id)).filter(tool => !!tool))
 
-function handleCloseTab(event: MouseEvent, toolId: string) {
+function handleCloseTab(event: MouseEvent | KeyboardEvent, toolId: string) {
   event.stopPropagation()
   closeTool(toolId)
 }
@@ -116,7 +116,7 @@ function getContextItems(toolId: string) {
         <span
           role="button"
           tabindex="0"
-          class="flex items-center justify-center w-4 h-4 rounded opacity-0 group-hover:opacity-100 hover:bg-elevated transition-opacity"
+          class="flex items-center justify-center w-4 h-4 rounded opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 hover:bg-elevated transition-opacity"
           :class="isToolActive(tool.id) ? 'hover:bg-primary-500/20' : ''"
           @click="handleCloseTab($event, tool.id)"
           @keydown.enter.stop="handleCloseTab($event, tool.id)"

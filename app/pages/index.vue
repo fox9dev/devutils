@@ -8,6 +8,49 @@ definePageMeta({
   layout: 'default'
 })
 
+// SEO 元信息
+useSeoMeta({
+  title: '开发者实用工具箱',
+  description: '免费在线开发者工具箱，提供 JSON 格式化、Base64 编解码、URL 编解码、文本对比、时间戳转换等常用开发工具。所有数据本地处理，隐私安全，无需安装，离线可用。',
+  keywords: 'DevUtils,开发者工具,在线工具箱,JSON格式化,Base64编解码,URL编解码,文本对比,时间戳转换,开发工具箱',
+  ogTitle: 'DevUtils - 开发者实用工具箱',
+  ogDescription: '免费在线开发者工具箱，提供 JSON 格式化、Base64 编解码、URL 编解码等常用开发工具。本地运行，隐私安全。',
+  ogUrl: 'https://devutils.fox9.dev'
+})
+
+// 结构化数据 - WebSite + SoftwareApplication
+useHead({
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        'name': 'DevUtils',
+        'url': 'https://devutils.fox9.dev',
+        'description': '免费在线开发者工具箱，提供 JSON 格式化、Base64 编解码、URL 编解码、文本对比、时间戳转换等常用开发工具。',
+        'potentialAction': {
+          '@type': 'SearchAction',
+          'target': 'https://devutils.fox9.dev/tools?q={search_term_string}',
+          'query-input': 'required name=search_term_string'
+        }
+      })
+    },
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        'name': 'DevUtils',
+        'applicationCategory': 'DeveloperApplication',
+        'operatingSystem': 'Web',
+        'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'CNY' },
+        'description': '一站式开发者工具箱，提供 JSON 格式化、Base64 编解码、URL 编解码等常用开发工具。'
+      })
+    }
+  ]
+})
+
 const { tools } = useTools()
 
 // 热门工具：固定取工具列表前 6 个

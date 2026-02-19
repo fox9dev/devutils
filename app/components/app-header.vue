@@ -200,7 +200,11 @@ const mobileMenuOpen = ref(false)
           icon="lucide:search"
           close
           class="h-[50vh] border-0 shadow-none"
-        />
+        >
+          <template #empty>
+            没有找到匹配的工具
+          </template>
+        </UCommandPalette>
       </template>
     </UModal>
   </header>

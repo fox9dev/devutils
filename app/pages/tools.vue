@@ -5,6 +5,31 @@
  */
 definePageMeta({ layout: 'default' })
 
+// SEO 元信息
+useSeoMeta({
+  title: '所有开发工具',
+  description: '浏览 DevUtils 全部开发者工具：JSON 格式化、Base64 编解码、URL 编解码、文本对比、时间戳转换等，支持搜索筛选，免费在线使用。',
+  keywords: '开发工具列表,在线工具,JSON格式化,Base64,URL编解码,文本对比,时间戳转换',
+  ogTitle: 'DevUtils - 所有开发工具',
+  ogDescription: '浏览 DevUtils 全部开发者工具，支持搜索筛选，免费在线使用。',
+  ogUrl: 'https://devutils.fox9.dev/tools'
+})
+
+useHead({
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        'name': '所有开发工具 - DevUtils',
+        'description': '浏览 DevUtils 全部开发者工具，支持搜索筛选，免费在线使用。',
+        'url': 'https://devutils.fox9.dev/tools'
+      })
+    }
+  ]
+})
+
 const { searchTools } = useTools()
 
 const input = useTemplateRef('input')

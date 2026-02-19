@@ -82,6 +82,8 @@ const displayTools = computed(() => searchTools(searchQuery.value))
         >
           <div
             class="p-2 flex items-center rounded-lg text-sm transition-[color,background-color] duration-300"
+            role="button"
+            tabindex="0"
             :class="[
               collapsed ? 'mx-0' : 'text-left min-w-0',
               isToolActive(tool.id)
@@ -89,6 +91,7 @@ const displayTools = computed(() => searchTools(searchQuery.value))
                 : 'text-muted hover:bg-elevated hover:text-default'
             ]"
             @click="openTool(tool.id)"
+            @keydown.enter.stop="openTool(tool.id)"
           >
             <UIcon
               :name="tool.icon"
