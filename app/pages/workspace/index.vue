@@ -5,8 +5,16 @@
  * 当没有选择具体工具时显示此页面
  */
 
+const { activeTab, openTool } = useToolTabs()
+
 definePageMeta({
   layout: 'workspace'
+})
+
+onMounted(() => {
+  if (activeTab.value) {
+    openTool(activeTab.value)
+  }
 })
 </script>
 

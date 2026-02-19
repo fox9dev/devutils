@@ -29,7 +29,7 @@ onMounted(() => {
         <Transition name="tabs-bar">
           <div
             v-if="openTabs.length"
-            class="shrink-0 overflow-hidden"
+            class="shrink-0 overflow-hidden flex items-center border-b border-default"
           >
             <ToolTabs />
           </div>

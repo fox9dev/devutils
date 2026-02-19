@@ -15,7 +15,7 @@ const links = [
 </script>
 
 <template>
-  <footer class="border-t border-default bg-default">
+  <footer>
     <div class="container mx-auto px-4 py-8 transition-all">
       <div class="flex flex-col md:flex-row items-center justify-between gap-4">
         <!-- 版权信息 -->

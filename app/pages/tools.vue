@@ -46,6 +46,7 @@ function clearSearch() {
         placeholder="搜索工具..."
         icon="lucide:search"
         class="flex-1"
+        size="xl"
       >
         <template #trailing>
           <UKbd value="/" />

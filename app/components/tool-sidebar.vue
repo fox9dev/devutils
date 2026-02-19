@@ -61,7 +61,7 @@ const displayTools = computed(() => searchTools(searchQuery.value))
         :class="collapsed ? 'justify-center' : 'justify-end'"
       >
         <UButton
-          color="neutral"
+          class="text-muted hover:bg-elevated hover:text-default"
           variant="ghost"
           :icon="collapsed ? 'lucide:panel-left-open' : 'lucide:panel-left-close'"
           :aria-label="collapsed ? '展开侧边栏' : '折叠侧边栏'"

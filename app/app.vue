@@ -1,17 +1,19 @@
 <script lang="ts" setup>
-const { slideDirection } = useToolTabs()
+const { slideDirection, openTabs } = useToolTabs()
 
 const transition = computed(() => {
-  if (!slideDirection.value) return false
+  if (!slideDirection.value) return {}
   return { name: slideDirection.value, mode: 'out-in' as const }
 })
+
+const keepAliveInclude = computed(() => [...openTabs.value])
 </script>
 
 <template>
   <UApp>
     <NuxtLayout>
       <NuxtPage
-        keepalive
+        :keepalive="{ include: keepAliveInclude }"
         :transition="transition"
       />
     </NuxtLayout>

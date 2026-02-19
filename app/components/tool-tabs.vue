@@ -87,7 +87,7 @@ function getContextItems(toolId: string) {
 <template>
   <div
     ref="scrollContainerRef"
-    class="flex items-center gap-2 w-full border-b border-default bg-default overflow-x-auto p-2 scroll-px-2"
+    class="flex items-center gap-2 w-full bg-default overflow-x-auto p-2 scroll-px-2"
   >
     <UContextMenu
       v-for="tool in openTools"
@@ -99,7 +99,7 @@ function getContextItems(toolId: string) {
         :data-tool-id="tool.id"
         role="button"
         tabindex="0"
-        class="group flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors whitespace-nowrap cursor-pointer"
+        class="group flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors whitespace-nowrap"
         :class="[
           isToolActive(tool.id)
             ? 'bg-primary-500/10 text-primary-500'

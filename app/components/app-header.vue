@@ -7,19 +7,13 @@ import type { CommandPaletteGroup } from '@nuxt/ui'
 import type { ToolMeta } from '~/types/tool'
 import { useMagicKeys, whenever } from '@vueuse/core'
 
-enum Theme {
-  Light = 'light',
-  Dark = 'dark'
-}
-
-const colorMode = useColorMode()
-
 const route = useRoute()
 const { searchTools } = useTools()
 const { openTool } = useToolTabs()
 
 // 搜索弹窗开关（用于图标点击与快捷键）
 const searchOpen = ref(false)
+
 // 搜索关键词（与 CommandPalette 双向绑定，用 searchTools 过滤，支持 keywords 检索但不展示）
 const searchTerm = ref('')
 
@@ -68,20 +62,6 @@ const navItems = [
   { label: '工具', to: '/tools', icon: 'lucide:wrench' },
   { label: '工作区', to: '/workspace', icon: 'lucide:layout-dashboard' }
 ]
-
-// 主题选项
-const themeOptions = [
-  { label: '浅色', value: Theme.Light, icon: 'lucide:sun' },
-  { label: '深色', value: Theme.Dark, icon: 'lucide:moon' }
-]
-
-// 当前主题
-const currentTheme = computed(() => themeOptions.find(t => t.value === colorMode.preference) || themeOptions[0])
-
-// 切换主题
-function changeTheme() {
-  colorMode.preference = colorMode.preference === Theme.Light ? Theme.Dark : Theme.Light
-}
 
 // 检查是否当前路由
 function isActive(path: string): boolean {
@@ -135,32 +115,24 @@ const mobileMenuOpen = ref(false)
       <div class="flex items-center gap-2">
         <!-- 搜索：点击或 Cmd/Ctrl+K 打开 -->
         <UButton
+          color="neutral"
           variant="ghost"
-          size="lg"
           icon="lucide:search"
           aria-label="搜索工具"
-          class="cursor-pointer"
           @click="searchOpen = true"
         />
 
         <!-- 主题切换 -->
-        <UButton
-          variant="ghost"
-          size="lg"
-          :icon="currentTheme!.icon"
-          aria-label="切换主题"
-          class="cursor-pointer"
-          @click="changeTheme"
-        />
+        <UColorModeButton />
 
         <!-- GitHub 链接 -->
         <UButton
+          color="neutral"
           as="a"
           href="https://github.com/fox9dev/devutils"
           target="_blank"
           rel="noopener noreferrer"
           variant="ghost"
-          size="lg"
           icon="simple-icons:github"
           aria-label="GitHub"
         />
@@ -168,9 +140,8 @@ const mobileMenuOpen = ref(false)
         <!-- 移动端菜单按钮 -->
         <UButton
           variant="ghost"
-          size="lg"
           :icon="mobileMenuOpen ? 'lucide:x' : 'lucide:menu'"
-          class="md:hidden cursor-pointer"
+          class="md:hidden"
           aria-label="打开菜单"
           @click="mobileMenuOpen = !mobileMenuOpen"
         />
