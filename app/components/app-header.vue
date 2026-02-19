@@ -139,6 +139,7 @@ const mobileMenuOpen = ref(false)
 
         <!-- 移动端菜单按钮 -->
         <UButton
+          color="neutral"
           variant="ghost"
           :icon="mobileMenuOpen ? 'lucide:x' : 'lucide:menu'"
           class="md:hidden"

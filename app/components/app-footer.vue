@@ -6,16 +6,12 @@ import dayjs from 'dayjs'
  * 包含版权信息、作者信息、友情链接
  */
 
-const currentYear = dayjs().year()
-
-const links = [
-  { label: 'GitHub', href: 'https://github.com/fox9dev/devutils', icon: 'simple-icons:github' },
-  { label: '反馈建议', href: 'https://github.com/fox9dev/devutils/issues', icon: 'lucide:message-circle' }
-]
+// 使用 useState 确保 SSR/客户端年份一致，避免跨年时区差异导致的水合不匹配
+const currentYear = useState('footer-year', () => dayjs().year())
 </script>
 
 <template>
-  <footer>
+  <footer class="border-t border-default">
     <div class="container mx-auto px-4 py-8 transition-all">
       <div class="flex flex-col md:flex-row items-center justify-between gap-4">
         <!-- 版权信息 -->
@@ -37,22 +33,18 @@ const links = [
         </div>
 
         <!-- 链接 -->
-        <div class="flex items-center gap-3">
-          <a
-            v-for="link in links"
-            :key="link.href"
-            :href="link.href"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="flex items-center gap-1.5 text-sm text-muted hover:text-default transition-colors"
-          >
-            <UIcon
-              :name="link.icon"
-              class="h-4 w-4"
-            />
-            <span class="hidden sm:inline">{{ link.label }}</span>
-          </a>
-        </div>
+        <a
+          href="https://github.com/fox9dev/devutils/issues"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center gap-1.5 text-sm text-muted hover:text-default transition-colors"
+        >
+          <UIcon
+            name="lucide:message-circle"
+            class="h-4 w-4"
+          />
+          <span class="hidden sm:inline">反馈建议</span>
+        </a>
       </div>
     </div>
   </footer>
