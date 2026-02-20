@@ -25,11 +25,11 @@ onMounted(() => {
 
       <!-- 右侧工作区 -->
       <div class="flex-1 flex flex-col overflow-hidden min-w-0">
-        <!-- 标签页：用过渡避免关闭最后/全部时布局瞬间跳动 -->
+        <!-- 标签页：固定高度 + height 过渡，避免关闭最后标签时内容先塌陷再过渡导致两次跳动 -->
         <Transition name="tabs-bar">
           <div
             v-if="openTabs.length"
-            class="shrink-0 overflow-hidden flex items-center border-b border-default"
+            class="h-13 shrink-0 overflow-hidden flex items-center border-b border-default"
           >
             <ToolTabs />
           </div>
@@ -48,33 +48,15 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* 进入：打开第一个 tab 时 */
-.tabs-bar-enter-active {
-  transition: max-height 0.2s ease-out, opacity 0.15s ease-out;
-}
-
-.tabs-bar-enter-from {
-  max-height: 0;
-  opacity: 0;
-}
-
-.tabs-bar-enter-to {
-  max-height: 80px;
-  opacity: 1;
-}
-
-/* 离开：关闭最后一个/全部 tab 时 */
+.tabs-bar-enter-active,
 .tabs-bar-leave-active {
-  transition: max-height 0.2s ease-out, opacity 0.15s ease-out;
+  transition: height 0.25s ease, opacity 0.2s ease;
+  overflow: hidden;
 }
 
-.tabs-bar-leave-from {
-  max-height: 80px;
-  opacity: 1;
-}
-
+.tabs-bar-enter-from,
 .tabs-bar-leave-to {
-  max-height: 0;
+  height: 0;
   opacity: 0;
 }
 </style>

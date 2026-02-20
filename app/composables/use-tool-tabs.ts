@@ -1,9 +1,9 @@
 /**
  * 工具标签页状态管理 Composable
  * 管理已打开的工具和当前激活的工具
+ * 使用 Cookie 持久化，确保 SSR 时服务端与客户端状态一致，无闪烁
  * 所有对外操作默认包含路由导航，确保状态与路由的原子性
  */
-import { useLocalStorage } from '@vueuse/core'
 
 enum SlideDirection {
   Left = 'slide-left',
@@ -13,13 +13,7 @@ enum SlideDirection {
 
 const STORAGE_KEY_TABS = 'devutils-open-tabs'
 const STORAGE_KEY_ACTIVE = 'devutils-active-tab'
-
-// 全局状态，确保跨组件共享
-const openTabs = useLocalStorage<string[]>(STORAGE_KEY_TABS, [])
-const activeTab = useLocalStorage<string>(STORAGE_KEY_ACTIVE, '')
-
-// 页面切换滑动方向：left = 向左滑（切到右侧 tab），right = 向右滑（切到左侧 tab），'' = 无动画
-const slideDirection = ref<SlideDirection>(SlideDirection.None)
+const COOKIE_MAX_AGE = 365 * 24 * 60 * 60
 
 interface TabActionOptions {
   /** 是否同时执行路由导航，默认 true。仅在路由 watcher 同步状态时设为 false */
@@ -27,6 +21,16 @@ interface TabActionOptions {
 }
 
 export function useToolTabs() {
+  const openTabs = useCookie<string[]>(STORAGE_KEY_TABS, {
+    default: () => [],
+    maxAge: COOKIE_MAX_AGE
+  })
+  const activeTab = useCookie<string>(STORAGE_KEY_ACTIVE, {
+    default: () => '',
+    maxAge: COOKIE_MAX_AGE
+  })
+  const slideDirection = useState<SlideDirection>('devutils-slide-direction', () => SlideDirection.None)
+
   /** 根据旧/新激活 tab 在当前 openTabs 中的位置计算滑动方向（须在修改 openTabs 之前调用） */
   function calcSlideDirection(fromId: string, toId: string): SlideDirection {
     if (!fromId || fromId === toId) return SlideDirection.None

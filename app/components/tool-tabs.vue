@@ -87,7 +87,7 @@ function getContextItems(toolId: string) {
 <template>
   <div
     ref="scrollContainerRef"
-    class="flex items-center gap-2 w-full bg-default overflow-x-auto p-2 scroll-px-2"
+    class="flex items-center gap-2 w-full bg-default overflow-x-auto px-2 scroll-px-2"
   >
     <UContextMenu
       v-for="tool in openTools"
