@@ -11,29 +11,29 @@ type SegmentSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 
 const sizeMap: Record<SegmentSize, { wrapper: string, indicator: string, button: string }> = {
   xs: {
-    wrapper: 'p-1',
-    indicator: 'top-1 bottom-1',
-    button: 'px-2 py-1 text-xs'
+    wrapper: 'px-0.5 py-1',
+    indicator: 'top-0.5 bottom-0.5',
+    button: 'px-2 py-0 text-xs'
   },
   sm: {
-    wrapper: 'p-1.5',
-    indicator: 'top-1.5 bottom-1.5',
-    button: 'px-2.5 py-1.5 text-xs'
+    wrapper: 'px-1 py-1.5',
+    indicator: 'top-0.5 bottom-0.5',
+    button: 'px-2.5 py-0 text-xs'
   },
   md: {
-    wrapper: 'p-1.5',
-    indicator: 'top-1.5 bottom-1.5',
-    button: 'px-2.5 py-1.5 text-sm'
+    wrapper: 'px-1 py-1.5',
+    indicator: 'top-0.5 bottom-0.5',
+    button: 'px-2.5 py-0 text-sm'
   },
   lg: {
-    wrapper: 'p-2',
-    indicator: 'top-2 bottom-2',
-    button: 'px-3 py-2 text-sm'
+    wrapper: 'px-1.5 py-2',
+    indicator: 'top-1 bottom-1',
+    button: 'px-3 py-0 text-sm'
   },
   xl: {
-    wrapper: 'p-2',
-    indicator: 'top-2 bottom-2',
-    button: 'px-3 py-2 text-base'
+    wrapper: 'px-1.5 py-2',
+    indicator: 'top-1 bottom-1',
+    button: 'px-3 py-0 text-base'
   }
 }
 
@@ -46,7 +46,7 @@ const props = withDefaults(
     /** 尺寸，与 Nuxt UI 一致 */
     size?: SegmentSize
   }>(),
-  { size: 'xs' }
+  { size: 'lg' }
 )
 
 const emit = defineEmits<{
@@ -96,7 +96,7 @@ onMounted(async () => {
 <template>
   <div
     ref="rootRef"
-    class="relative inline-flex bg-elevated rounded-lg border border-default"
+    class="relative inline-flex bg-elevated rounded-lg ring-1 ring-inset ring-default"
     :class="sizeClasses.wrapper"
   >
     <!-- 滑动背景块 -->

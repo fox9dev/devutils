@@ -15,21 +15,6 @@ useSeoMeta({
   ogUrl: 'https://devutils.fox9.dev/tools'
 })
 
-useHead({
-  script: [
-    {
-      type: 'application/ld+json',
-      innerHTML: JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'CollectionPage',
-        'name': '所有开发工具 - DevUtils',
-        'description': '浏览 DevUtils 全部开发者工具，支持搜索筛选，免费在线使用。',
-        'url': 'https://devutils.fox9.dev/tools'
-      })
-    }
-  ]
-})
-
 const { searchTools } = useTools()
 
 const input = useTemplateRef('input')

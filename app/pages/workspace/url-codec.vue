@@ -13,76 +13,72 @@ definePageMeta({
     icon: 'lucide:link',
     name: 'URL 编解码',
     description: 'URL 编码与解码，支持 encodeURI 和 encodeURIComponent',
-    keywords: ['url', 'encode', 'decode', 'uri', 'percent', '百分号编码']
+    keywords: ['url', 'encode', 'decode', 'uri', 'percent', '百分号编码', 'url encoder', 'url decoder', '免费URL编码解码']
   }
 })
 
-// 模式：编码 / 解码
-const mode = ref<'encode' | 'decode'>('encode')
+// SEO 元信息
+useSeoMeta({
+  title: 'URL 编解码 - 在线URL编码解码工具',
+  description: '免费在线 URL 编解码工具，支持 encodeURI 和 encodeURIComponent 两种模式，URL 编码与解码一键转换。本地运行，隐私安全。',
+  keywords: 'URL编码,URL解码,在线URL编解码,encodeURI,encodeURIComponent,百分号编码,URL Encoder,URL Decoder,免费URL编码解码',
+  ogTitle: 'DevUtils - URL 编解码 - 在线URL编码解码工具',
+  ogDescription: '免费在线 URL 编解码工具，支持 encodeURI / encodeURIComponent。',
+  ogUrl: 'https://devutils.fox9.dev/workspace/url-codec'
+})
 
 // 编码类型
-const encodeType = ref<'uri' | 'component'>('component')
+enum EncodeType {
+  URI = 'URI',
+  COMPONENT = 'URIComponent'
+}
+const encodeType = ref<EncodeType>(EncodeType.COMPONENT)
 
-// 输入输出
+// 输入
 const input = ref('')
+
+// 输出
 const output = ref('')
-const error = ref('')
 
-// 自动处理
-const autoProcess = ref(true)
-
-// 处理函数
-function process() {
+// 编码
+function encode() {
   if (!input.value) {
     output.value = ''
-    error.value = ''
     return
   }
 
-  error.value = ''
-
-  try {
-    if (mode.value === 'encode') {
-      if (encodeType.value === 'uri') {
-        output.value = encodeURI(input.value)
-      } else {
-        output.value = encodeURIComponent(input.value)
-      }
-    } else {
-      if (encodeType.value === 'uri') {
-        output.value = decodeURI(input.value)
-      } else {
-        output.value = decodeURIComponent(input.value)
-      }
-    }
-  } catch (e) {
-    error.value = e instanceof Error ? e.message : '处理失败'
-    output.value = ''
+  if (encodeType.value === EncodeType.URI) {
+    output.value = encodeURI(input.value)
+  } else {
+    output.value = encodeURIComponent(input.value)
   }
 }
 
-// 监听变化（自动处理模式）
-watch([input, mode, encodeType], () => {
-  if (autoProcess.value) {
-    process()
+// 解码
+function decode() {
+  if (!input.value) {
+    output.value = ''
+    return
   }
-}, { immediate: true })
+
+  if (encodeType.value === EncodeType.URI) {
+    output.value = decodeURI(input.value)
+  } else {
+    output.value = decodeURIComponent(input.value)
+  }
+}
 
 // 切换模式时交换输入输出
-function switchMode() {
-  const newMode = mode.value === 'encode' ? 'decode' : 'encode'
+function switchValue() {
   const temp = input.value
   input.value = output.value
   output.value = temp
-  mode.value = newMode
-  error.value = ''
 }
 
 // 清空
 function clear() {
   input.value = ''
   output.value = ''
-  error.value = ''
 }
 
 // 复制结果
@@ -93,164 +89,81 @@ function copyOutput() {
     copy(output.value)
   }
 }
-
-// 示例
-function loadExample() {
-  if (mode.value === 'encode') {
-    input.value = 'https://example.com/search?q=你好世界&lang=zh-CN'
-  } else {
-    input.value = 'https%3A%2F%2Fexample.com%2Fsearch%3Fq%3D%E4%BD%A0%E5%A5%BD%E4%B8%96%E7%95%8C%26lang%3Dzh-CN'
-  }
-}
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 h-full p-4">
-    <!-- 操作栏 -->
-    <div class="flex flex-wrap items-center gap-2">
-      <!-- 模式切换 -->
-      <div class="inline-flex rounded-lg border border-[var(--ui-border)] p-0.5">
-        <button
-          class="px-3 py-1.5 text-sm rounded-md transition-colors"
-          :class="mode === 'encode' ? 'bg-primary-500 text-white' : 'text-[var(--ui-text-muted)] hover:text-[var(--ui-text)]'"
-          @click="mode = 'encode'"
-        >
-          编码
-        </button>
-        <button
-          class="px-3 py-1.5 text-sm rounded-md transition-colors"
-          :class="mode === 'decode' ? 'bg-primary-500 text-white' : 'text-[var(--ui-text-muted)] hover:text-[var(--ui-text)]'"
-          @click="mode = 'decode'"
-        >
-          解码
-        </button>
-      </div>
+  <div class="flex flex-col gap-4">
+    <Note title="URI：保留 URL 结构字符 ; / ? : @ & = + $ , #" />
+    <Note
+      color="info"
+      title="URIComponent：除英文字母、数字和 - _ . ! ~ * ' ( ) 之外的所有字符都进行编码"
+    />
 
-      <!-- 编码类型 -->
-      <div class="inline-flex rounded-lg border border-[var(--ui-border)] p-0.5">
-        <button
-          class="px-3 py-1.5 text-sm rounded-md transition-colors"
-          :class="encodeType === 'component' ? 'bg-[var(--ui-bg-elevated)] text-[var(--ui-text)]' : 'text-[var(--ui-text-muted)] hover:text-[var(--ui-text)]'"
-          @click="encodeType = 'component'"
-        >
-          URIComponent
-        </button>
-        <button
-          class="px-3 py-1.5 text-sm rounded-md transition-colors"
-          :class="encodeType === 'uri' ? 'bg-[var(--ui-bg-elevated)] text-[var(--ui-text)]' : 'text-[var(--ui-text-muted)] hover:text-[var(--ui-text)]'"
-          @click="encodeType = 'uri'"
-        >
-          URI
-        </button>
-      </div>
+    <div class="flex flex-col gap-2">
+      <UTextarea
+        v-model="input"
+        :rows="10"
+        placeholder="输入要处理的文本"
+      />
 
-      <UButton
-        variant="outline"
-        size="sm"
-        icon="lucide:arrow-left-right"
-        @click="switchMode"
-      >
-        交换
-      </UButton>
+      <!-- 操作栏 -->
+      <div class="flex flex-col gap-2">
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- 编码类型 -->
+          <SegmentControl
+            v-model="encodeType"
+            :options="[{ label: 'URIComponent', value: EncodeType.COMPONENT }, { label: 'URI', value: EncodeType.URI }]"
+          />
 
-      <div class="flex-1" />
-
-      <label class="flex items-center gap-2 text-sm text-[var(--ui-text-muted)]">
-        <UCheckbox v-model="autoProcess" />
-        自动处理
-      </label>
-
-      <UButton
-        v-if="!autoProcess"
-        icon="lucide:play"
-        @click="process"
-      >
-        执行
-      </UButton>
-
-      <UButton
-        variant="ghost"
-        size="sm"
-        icon="lucide:file-code"
-        @click="loadExample"
-      >
-        示例
-      </UButton>
-    </div>
-
-    <!-- 说明 -->
-    <div class="text-xs text-[var(--ui-text-muted)] bg-[var(--ui-bg-elevated)] px-3 py-2 rounded-lg">
-      <span class="font-medium">URIComponent</span>：编码所有特殊字符（推荐用于查询参数）
-      <span class="mx-2">|</span>
-      <span class="font-medium">URI</span>：保留 URL 结构字符（://?#）
-    </div>
-
-    <!-- 主体区域 -->
-    <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 min-h-0">
-      <!-- 输入区 -->
-      <div class="flex flex-col gap-2 min-h-0">
-        <div class="flex items-center justify-between">
-          <label class="text-sm font-medium text-[var(--ui-text)]">
-            {{ mode === 'encode' ? '原文' : '已编码' }}
-          </label>
           <UButton
             variant="ghost"
-            size="xs"
+            icon="lucide:arrow-up-down"
+            color="secondary"
+            @click="switchValue"
+          >
+            交换
+          </UButton>
+
+          <UButton
+            icon="lucide:play"
+            color="success"
+            @click="encode"
+          >
+            编码
+          </UButton>
+          <UButton
+            color="warning"
+            icon="lucide:package-open"
+            @click="decode"
+          >
+            解码
+          </UButton>
+
+          <UButton
+            variant="ghost"
+            color="error"
             icon="lucide:trash-2"
             @click="clear"
           >
             清空
           </UButton>
-        </div>
-        <UTextarea
-          v-model="input"
-          :placeholder="mode === 'encode' ? '输入要编码的 URL 或文本...' : '输入编码后的字符串...'"
-          class="flex-1 font-mono text-sm"
-          :rows="12"
-          autoresize
-        />
-      </div>
 
-      <!-- 输出区 -->
-      <div class="flex flex-col gap-2 min-h-0">
-        <div class="flex items-center justify-between">
-          <label class="text-sm font-medium text-[var(--ui-text)]">
-            {{ mode === 'encode' ? '已编码' : '原文' }}
-          </label>
           <UButton
             variant="ghost"
-            size="xs"
+            :color="copied ? 'success' : 'primary'"
             :icon="copied ? 'lucide:check' : 'lucide:copy'"
-            :disabled="!output"
             @click="copyOutput"
           >
-            {{ copied ? '已复制' : '复制' }}
+            {{ copied ? '复制成功' : '复制结果' }}
           </UButton>
         </div>
+
         <UTextarea
           v-model="output"
-          readonly
-          placeholder="结果将显示在这里..."
-          class="flex-1 font-mono text-sm"
-          :rows="12"
+          :rows="10"
+          placeholder="处理结果"
         />
       </div>
     </div>
-
-    <!-- 错误提示 -->
-    <Transition
-      enter-active-class="transition-all duration-200"
-      enter-from-class="opacity-0 -translate-y-2"
-      leave-active-class="transition-all duration-150"
-      leave-to-class="opacity-0"
-    >
-      <div
-        v-if="error"
-        class="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 text-red-500 text-sm"
-      >
-        <UIcon name="lucide:alert-circle" class="w-4 h-4 flex-shrink-0" />
-        <span>{{ error }}</span>
-      </div>
-    </Transition>
   </div>
 </template>

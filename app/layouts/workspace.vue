@@ -8,12 +8,11 @@ import type { ToolMeta } from '~/types/tool'
 const route = useRoute()
 const { openTabs, openTool } = useToolTabs()
 
-onMounted(() => {
-  const tool = route.meta?.tool as ToolMeta | undefined
-  if (tool && tool.id) {
-    openTool(tool.id, { navigate: false })
-  }
-})
+// 在 setup 阶段（SSR + 客户端）同步打开当前工具 tab，避免 hydration mismatch
+const tool = route.meta?.tool as ToolMeta | undefined
+if (tool && tool.id) {
+  openTool(tool.id, { navigate: false })
+}
 </script>
 
 <template>
@@ -37,7 +36,7 @@ onMounted(() => {
 
         <!-- 工具内容：响应式左右留白 + 大屏最大宽度；out-in 使页面切换时先离开再进入 -->
         <div class="flex-1 overflow-auto min-h-0">
-          <div class="workspace-content h-full w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:max-w-350 xl:px-12 2xl:max-w-400 2xl:px-16">
+          <div class="workspace-content h-full w-full mx-auto overflow-y-auto px-4 py-4 sm:px-6 md:px-8 lg:px-10 xl:max-w-350 xl:px-12 2xl:max-w-400 2xl:px-16">
             <slot />
           </div>
         </div>

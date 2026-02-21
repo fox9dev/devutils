@@ -18,39 +18,6 @@ useSeoMeta({
   ogUrl: 'https://devutils.fox9.dev'
 })
 
-// 结构化数据 - WebSite + SoftwareApplication
-useHead({
-  script: [
-    {
-      type: 'application/ld+json',
-      innerHTML: JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'WebSite',
-        'name': 'DevUtils',
-        'url': 'https://devutils.fox9.dev',
-        'description': '免费在线开发者工具箱，提供 JSON 格式化、Base64 编解码、URL 编解码、文本对比、时间戳转换等常用开发工具。',
-        'potentialAction': {
-          '@type': 'SearchAction',
-          'target': 'https://devutils.fox9.dev/tools?q={search_term_string}',
-          'query-input': 'required name=search_term_string'
-        }
-      })
-    },
-    {
-      type: 'application/ld+json',
-      innerHTML: JSON.stringify({
-        '@context': 'https://schema.org',
-        '@type': 'SoftwareApplication',
-        'name': 'DevUtils',
-        'applicationCategory': 'DeveloperApplication',
-        'operatingSystem': 'Web',
-        'offers': { '@type': 'Offer', 'price': '0', 'priceCurrency': 'CNY' },
-        'description': '一站式开发者工具箱，提供 JSON 格式化、Base64 编解码、URL 编解码等常用开发工具。'
-      })
-    }
-  ]
-})
-
 const { tools } = useTools()
 
 // 热门工具：固定取工具列表前 6 个
@@ -74,9 +41,9 @@ const features = [
     description: '所有数据在本地处理，不会上传至服务器'
   },
   {
-    icon: 'lucide:wifi-off',
-    title: '离线可用',
-    description: '无需网络连接，随时随地高效工作'
+    icon: 'lucide:code-2',
+    title: '完全开源',
+    description: '代码公开透明，可自由使用、修改与二次开发'
   }
 ]
 </script>
