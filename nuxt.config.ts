@@ -23,6 +23,12 @@ export default defineNuxtConfig({
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.svg' },
         { rel: 'canonical', href: 'https://devutils.fox9.dev' }
+      ],
+      script: [
+        {
+          tagPriority: 'critical',
+          innerHTML: `(function(){try{if(document.cookie.includes('devutils-sidebar-collapsed=true'))document.documentElement.classList.add('sidebar-collapsed-init')}catch(e){}})()`
+        }
       ]
     }
   },

@@ -30,6 +30,7 @@ const displayTools = computed(() => searchTools(searchQuery.value))
 
 <template>
   <aside
+    data-sidebar
     class="flex flex-col h-full box-content border-r border-default bg-default transition-[width] duration-300 ease-out"
     :class="collapsed ? 'w-13' : 'w-64'"
   >
@@ -42,6 +43,7 @@ const displayTools = computed(() => searchTools(searchQuery.value))
     >
       <div
         v-show="!collapsed"
+        data-sidebar-search
         class="min-w-0 overflow-hidden"
       >
         <UInput
@@ -57,6 +59,7 @@ const displayTools = computed(() => searchTools(searchQuery.value))
         </UInput>
       </div>
       <div
+        data-sidebar-toggle
         class="flex shrink-0 transition-[justify-content] duration-300 ease-out"
         :class="collapsed ? 'justify-center' : 'justify-end'"
       >
@@ -98,6 +101,7 @@ const displayTools = computed(() => searchTools(searchQuery.value))
               class="w-5 h-5 shrink-0"
             />
             <span
+              data-sidebar-label
               class="truncate min-w-0 overflow-hidden transition-[opacity,max-width,margin] duration-300 ease-out"
               :class="collapsed ? 'opacity-0 max-w-0 ml-0' : 'opacity-100 max-w-40 ml-2'"
             >
