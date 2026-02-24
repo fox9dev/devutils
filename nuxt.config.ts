@@ -56,7 +56,6 @@ export default defineNuxtConfig({
   routeRules: {
     '/': { prerender: true },
     '/tools': { prerender: true },
-    '/workspace': { prerender: true },
     '/workspace/*': { prerender: true }
   },
 

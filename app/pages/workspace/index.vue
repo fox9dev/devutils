@@ -1,11 +1,9 @@
 <script setup lang="ts">
 /**
  * 工具工作区首页
- * 路径: /workspace
+ * 路径: /workspace/
  * 当没有选择具体工具时显示此页面
  */
-
-const { activeTab, openTool } = useToolTabs()
 
 definePageMeta({
   layout: 'workspace'
@@ -17,13 +15,7 @@ useSeoMeta({
   description: 'DevUtils 工作区，从左侧工具栏选择工具开始使用。支持 JSON 格式化、Base64 编解码、URL 编解码、文本对比、时间戳转换。',
   ogTitle: 'DevUtils - 工作区',
   ogDescription: 'DevUtils 工作区，多款开发工具集中一处，即开即用。',
-  ogUrl: 'https://devutils.fox9.dev/workspace'
-})
-
-onMounted(() => {
-  if (activeTab.value) {
-    openTool(activeTab.value)
-  }
+  ogUrl: 'https://devutils.fox9.dev/workspace/'
 })
 </script>
 

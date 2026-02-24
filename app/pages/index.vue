@@ -81,7 +81,7 @@ const features = [
           <!-- CTA 按钮 -->
           <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
             <UButton
-              to="/workspace"
+              to="/workspace/"
               icon="lucide:rocket"
               class="px-8 bg-linear-to-r from-sky-500 to-teal-500 hover:from-sky-600 hover:to-teal-600 border-0"
             >

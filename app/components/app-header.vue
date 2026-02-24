@@ -60,7 +60,7 @@ whenever(() => ctrlK?.value === true, () => {
 // 导航菜单项
 const navItems = [
   { label: '工具', to: '/tools', icon: 'lucide:wrench' },
-  { label: '工作区', to: '/workspace', icon: 'lucide:layout-dashboard' }
+  { label: '工作区', to: '/workspace/', icon: 'lucide:layout-dashboard' }
 ]
 
 // 检查是否当前路由
