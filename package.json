@@ -19,7 +19,8 @@
     "dayjs": "^1.11.19",
     "diff": "^8.0.3",
     "nuxt": "^4.2.2",
-    "tailwindcss": "^4.1.18"
+    "tailwindcss": "^4.1.18",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.13.0",
