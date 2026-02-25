@@ -1,60 +1,65 @@
-# Nuxt Starter Template
+# DevUtils
 
-[![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt&labelColor=020420)](https://ui.nuxt.com)
+一个现代化的开发者工具集合，旨在提供便捷、高效的在线开发辅助功能。基于 Nuxt 4 和 Nuxt UI 构建，拥有极佳的性能和用户体验。
 
-Use this template to get started with [Nuxt UI](https://ui.nuxt.com) quickly.
+## ✨ 特性
 
-- [Live demo](https://starter-template.nuxt.dev/)
-- [Documentation](https://ui.nuxt.com/docs/getting-started/installation/nuxt)
+- 🛠️ **多功能工具箱**：集成多种常用开发工具，满足日常开发需求。
+- 🚀 **高性能**：基于 Nuxt 4 构建，加载速度快，响应迅速。
+- 🎨 **现代化 UI**：使用 Nuxt UI 和 TailwindCSS v4，界面简洁美观，支持暗色模式。
+- 🔍 **便捷导航**：内置工具搜索和快速切换功能，提升工作效率。
+- 📱 **响应式设计**：完美适配桌面端和移动端设备。
 
-<a href="https://starter-template.nuxt.dev/" target="_blank">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png">
-    <img alt="Nuxt Starter Template" src="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png">
-  </picture>
-</a>
+## 🧰 当前可用工具
 
-> The starter template for Vue is on https://github.com/nuxt-ui-templates/starter-vue.
+目前包含以下实用工具，更多工具正在持续开发中：
 
-## Quick Start
+- **URL 编解码 (URL Codec)**: 快速对 URL 进行编码和解码操作。
+- **UUID 生成器 (UUID Generator)**: 批量生成 UUID (v1, v4 等)，支持多种格式输出。
 
-```bash [Terminal]
-npm create nuxt@latest -- -t github:nuxt-ui-templates/starter
-```
+## 🛠️ 技术栈
 
-## Deploy your own
+本项目使用了以下核心技术：
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=starter&repository-url=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Fstarter&demo-image=https%3A%2F%2Fui.nuxt.com%2Fassets%2Ftemplates%2Fnuxt%2Fstarter-dark.png&demo-url=https%3A%2F%2Fstarter-template.nuxt.dev%2F&demo-title=Nuxt%20Starter%20Template&demo-description=A%20minimal%20template%20to%20get%20started%20with%20Nuxt%20UI.)
+- [Nuxt 4](https://nuxt.com) - 全栈 Vue 框架
+- [Vue 3](https://vuejs.org) - 渐进式 JavaScript 框架
+- [Nuxt UI](https://ui.nuxt.com) - 基于 Vue 和 Tailwind 的 UI 组件库
+- [TailwindCSS v4](https://tailwindcss.com) - 原子化 CSS 框架
+- [TypeScript](https://www.typescriptlang.org) - 类型安全的 JavaScript 超集
+- [Pnpm](https://pnpm.io) - 快速、节省磁盘空间的包管理器
 
-## Setup
+## 🚀 快速开始
 
-Make sure to install the dependencies:
+### 前置要求
+
+- Node.js (建议 LTS 版本)
+- pnpm 包管理器
+
+### 安装依赖
 
 ```bash
 pnpm install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+### 启动开发服务器
 
 ```bash
 pnpm dev
 ```
 
-## Production
+启动后，访问 `http://localhost:3000` 即可查看应用。
 
-Build the application for production:
+### 构建生产版本
 
 ```bash
 pnpm build
 ```
 
-Locally preview production build:
+构建完成后，可以使用 `node .output/server/index.mjs` 运行生产环境服务。
+
+### 代码检查与格式化
 
 ```bash
-pnpm preview
+pnpm lint
+pnpm typecheck
 ```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
