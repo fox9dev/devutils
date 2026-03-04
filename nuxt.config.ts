@@ -36,7 +36,8 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
 
   site: {
-    url: 'https://devutils.fox9.dev'
+    url: 'https://devutils.fox9.dev',
+    name: 'DevUtils'
   },
 
   colorMode: {
@@ -53,13 +54,14 @@ export default defineNuxtConfig({
     }
   },
 
-  routeRules: {
-    '/': { prerender: true },
-    '/tools': { prerender: true },
-    '/workspace/*': { prerender: true }
-  },
-
   compatibilityDate: '2025-01-15',
+
+  nitro: {
+    prerender: {
+      crawlLinks: true,
+      routes: ['/']
+    }
+  },
 
   eslint: {
     config: {
