@@ -215,6 +215,7 @@ onMounted(() => {
           type="number"
           :min="1"
           :max="500"
+          class="min-w-20"
         />
       </div>
 
