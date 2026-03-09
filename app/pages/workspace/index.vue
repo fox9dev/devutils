@@ -20,7 +20,7 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="h-full flex flex-col items-center justify-center gap-4 text-center">
+  <div class="flex-1 flex flex-col items-center justify-center gap-4 text-center">
     <div class="flex items-center justify-center w-16 h-16 rounded-2xl bg-primary-500/10">
       <UIcon
         name="lucide:layout-dashboard"
