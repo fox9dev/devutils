@@ -10,7 +10,7 @@ const keepAliveInclude = computed(() => [...openTabs.value])
 </script>
 
 <template>
-  <UApp>
+  <UApp :toaster="{ position: 'top-center' }">
     <NuxtLayout>
       <NuxtPage
         :keepalive="{ include: keepAliveInclude }"
