@@ -3,9 +3,6 @@
  * JSON 格式化工具
  * 支持格式化、压缩、校验 JSON
  */
-import { useClipboard } from '@vueuse/core'
-
-const customToast = useCustomToast('json-formatter')
 
 // 工具元数据定义
 definePageMeta({
@@ -31,9 +28,11 @@ useSeoMeta({
 
 const input = ref('')
 const output = ref('')
+const error = ref('')
 const indentSize = ref(2)
 
 function format() {
+  error.value = ''
   if (!input.value.trim()) {
     output.value = ''
     return
@@ -43,11 +42,12 @@ function format() {
     output.value = JSON.stringify(parsed, null, indentSize.value)
   } catch (e) {
     output.value = ''
-    customToast.error(`格式化失败：${(e as Error).message}`)
+    error.value = `格式化失败：${(e as Error).message}`
   }
 }
 
 function minify() {
+  error.value = ''
   if (!input.value.trim()) {
     output.value = ''
     return
@@ -57,11 +57,12 @@ function minify() {
     output.value = JSON.stringify(parsed)
   } catch (e) {
     output.value = ''
-    customToast.error(`压缩失败：${(e as Error).message}`)
+    error.value = `压缩失败：${(e as Error).message}`
   }
 }
 
 function validate() {
+  error.value = ''
   if (!input.value.trim()) {
     return
   }
@@ -70,7 +71,7 @@ function validate() {
     output.value = '✓ JSON 格式正确'
   } catch (e) {
     output.value = ''
-    customToast.error(`格式校验失败：${(e as Error).message}`)
+    error.value = `格式校验失败：${(e as Error).message}`
   }
 }
 
@@ -83,12 +84,7 @@ function switchValue() {
 function clear() {
   input.value = ''
   output.value = ''
-}
-
-const { copy, copied } = useClipboard()
-
-function copyOutput() {
-  if (output.value) copy(output.value)
+  error.value = ''
 }
 </script>
 
@@ -153,19 +149,19 @@ function copyOutput() {
       >
         清空
       </UButton>
-      <UButton
-        variant="ghost"
-        :color="copied ? 'success' : 'primary'"
-        :icon="copied ? 'lucide:check' : 'lucide:copy'"
-        :disabled="!output"
-        @click="copyOutput"
-      >
-        {{ copied ? '复制成功' : '复制结果' }}
-      </UButton>
+      <Copy :text="output" />
     </div>
 
     <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-muted">输出</label>
+      <label class="text-sm font-medium text-muted">
+        输出
+        <span
+          v-if="error"
+          class="text-sm text-error"
+        >
+          {{ error }}
+        </span>
+      </label>
       <UTextarea
         v-model="output"
         :rows="12"

@@ -168,6 +168,7 @@ export function useToolTabs() {
     openTabs: readonly(openTabs),
     activeTab: readonly(activeTab),
     slideDirection: readonly(slideDirection),
+    navigateToActive,
     openTool,
     closeTool,
     switchTab,

@@ -17,6 +17,12 @@ useSeoMeta({
   ogDescription: 'DevUtils 工作区，多款开发工具集中一处，即开即用。',
   ogUrl: 'https://devutils.fox9.dev/workspace/'
 })
+
+const { navigateToActive } = useToolTabs()
+
+onMounted(() => {
+  navigateToActive()
+})
 </script>
 
 <template>

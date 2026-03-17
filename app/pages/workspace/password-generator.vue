@@ -3,8 +3,6 @@
  * 密码生成器工具
  * 支持长度、大小写、数字、符号等选项，使用 crypto.getRandomValues 安全随机
  */
-import { useClipboard } from '@vueuse/core'
-
 // 工具元数据定义
 definePageMeta({
   layout: 'workspace',
@@ -116,14 +114,6 @@ function clear() {
   output.value = ''
 }
 
-const { copy, copied } = useClipboard()
-
-function copyOutput() {
-  if (output.value) {
-    copy(output.value)
-  }
-}
-
 onMounted(() => {
   generate()
 })
@@ -207,14 +197,7 @@ onMounted(() => {
       >
         清空
       </UButton>
-      <UButton
-        variant="ghost"
-        :color="copied ? 'success' : 'primary'"
-        :icon="copied ? 'lucide:check' : 'lucide:copy'"
-        @click="copyOutput"
-      >
-        {{ copied ? '复制成功' : '复制结果' }}
-      </UButton>
+      <Copy :text="output" />
     </div>
 
     <!-- 输出 -->

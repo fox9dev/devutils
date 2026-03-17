@@ -3,15 +3,11 @@
  * Base64 编解码工具
  * 支持文本的 Base64 编码与解码
  */
-import { useClipboard } from '@vueuse/core'
-
-const id = 'base64-codec'
-
 // 工具元数据定义
 definePageMeta({
   layout: 'workspace',
   tool: {
-    id,
+    id: 'base64-codec',
     icon: 'lucide:binary',
     name: 'Base64 编解码',
     description: 'Base64 编码与解码，支持文本转换',
@@ -29,12 +25,12 @@ useSeoMeta({
   ogUrl: 'https://devutils.fox9.dev/workspace/base64-codec'
 })
 
-const toast = useCustomToast(id)
-
 const input = ref('')
 const output = ref('')
+const error = ref('')
 
 function encode() {
+  error.value = ''
   if (!input.value) {
     output.value = ''
     return
@@ -47,12 +43,13 @@ function encode() {
     }
     output.value = btoa(binary)
   } catch {
-    toast.error('编码失败')
+    error.value = '编码失败'
     output.value = ''
   }
 }
 
 function decode() {
+  error.value = ''
   if (!input.value) {
     output.value = ''
     return
@@ -65,7 +62,7 @@ function decode() {
     }
     output.value = new TextDecoder().decode(bytes)
   } catch {
-    toast.error('解码失败')
+    error.value = '解码失败'
     output.value = ''
   }
 }
@@ -79,12 +76,7 @@ function switchValue() {
 function clear() {
   input.value = ''
   output.value = ''
-}
-
-const { copy, copied } = useClipboard()
-
-function copyOutput() {
-  if (output.value) copy(output.value)
+  error.value = ''
 }
 </script>
 
@@ -130,19 +122,19 @@ function copyOutput() {
       >
         清空
       </UButton>
-      <UButton
-        variant="ghost"
-        :color="copied ? 'success' : 'primary'"
-        :icon="copied ? 'lucide:check' : 'lucide:copy'"
-        :disabled="!output"
-        @click="copyOutput"
-      >
-        {{ copied ? '复制成功' : '复制结果' }}
-      </UButton>
+      <Copy :text="output" />
     </div>
 
     <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-muted">输出</label>
+      <label class="text-sm font-medium text-muted">
+        输出
+        <span
+          v-if="error"
+          class="text-sm text-error"
+        >
+          {{ error }}
+        </span>
+      </label>
       <UTextarea
         v-model="output"
         :rows="8"

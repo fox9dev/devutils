@@ -16,9 +16,12 @@
     "@nuxt/ui": "^4.5.1",
     "@nuxtjs/sitemap": "^7.6.0",
     "@vueuse/core": "^14.1.0",
+    "colord": "^2.9.3",
     "dayjs": "^1.11.19",
     "diff": "^8.0.3",
     "js-md5": "^0.8.3",
+    "jwt-decode": "^4.0.0",
+    "lorem-ipsum": "^2.0.8",
     "nuxt": "^4.2.2",
     "tailwindcss": "^4.1.18",
     "uuid": "^13.0.0"

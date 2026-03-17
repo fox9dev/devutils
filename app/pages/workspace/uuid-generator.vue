@@ -4,7 +4,6 @@
  * 支持 v1 / v3 / v4 / v5 / v6 / v7 各版本生成
  */
 import { v1, v3, v4, v5, v6, v7 } from 'uuid'
-import { useClipboard } from '@vueuse/core'
 
 // 工具元数据定义
 definePageMeta({
@@ -131,15 +130,6 @@ function clear() {
   output.value = ''
 }
 
-// 复制结果
-const { copy, copied } = useClipboard()
-
-function copyOutput() {
-  if (output.value) {
-    copy(output.value)
-  }
-}
-
 // 初始化生成一个
 onMounted(() => {
   generate()
@@ -249,14 +239,7 @@ onMounted(() => {
         清空
       </UButton>
 
-      <UButton
-        variant="ghost"
-        :color="copied ? 'success' : 'primary'"
-        :icon="copied ? 'lucide:check' : 'lucide:copy'"
-        @click="copyOutput"
-      >
-        {{ copied ? '复制成功' : '复制结果' }}
-      </UButton>
+      <Copy :text="output" />
     </div>
 
     <!-- 输出 -->

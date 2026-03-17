@@ -4,17 +4,12 @@
  * Unix 时间戳与日期时间互转
  */
 import dayjs from 'dayjs'
-import { useClipboard } from '@vueuse/core'
-
-const id = 'timestamp-converter'
-
-const toast = useCustomToast(id)
 
 // 工具元数据定义
 definePageMeta({
   layout: 'workspace',
   tool: {
-    id,
+    id: 'timestamp-converter',
     icon: 'lucide:clock',
     name: '时间戳转换',
     description: 'Unix 时间戳与日期时间互转，支持秒/毫秒',
@@ -36,8 +31,10 @@ type Unit = 'second' | 'millisecond'
 const unit = ref<Unit>('second')
 const timestamp = ref('')
 const date = ref('')
+const error = ref('')
 
 function timestampToDate() {
+  error.value = ''
   const val = timestamp.value.trim()
   if (!val) {
     date.value = ''
@@ -46,19 +43,20 @@ function timestampToDate() {
   const num = Number(val)
   if (Number.isNaN(num)) {
     date.value = ''
-    toast.error('请输入有效的数字')
+    error.value = '请输入有效的数字'
     return
   }
   const ms = unit.value === 'second' ? num * 1000 : num
   if (ms < -8640000000000000 || ms > 8640000000000000) {
     date.value = ''
-    toast.error('时间戳超出有效范围')
+    error.value = '时间戳超出有效范围'
     return
   }
   date.value = dayjs(ms).format('YYYY-MM-DD HH:mm:ss')
 }
 
 function dateToTimestamp() {
+  error.value = ''
   const val = date.value.trim()
   if (!val) {
     timestamp.value = ''
@@ -67,7 +65,7 @@ function dateToTimestamp() {
   const d = dayjs(val)
   if (!d.isValid()) {
     timestamp.value = ''
-    toast.error('请输入有效的日期时间，如：2024-01-01 12:00:00')
+    error.value = '请输入有效的日期时间，如：2024-01-01 12:00:00'
     return
   }
   const ts = unit.value === 'second' ? Math.floor(d.valueOf() / 1000) : d.valueOf()
@@ -87,17 +85,7 @@ function useNow() {
 function clear() {
   timestamp.value = ''
   date.value = ''
-}
-
-const { copy: copyTimestamp, copied: copiedTimestamp } = useClipboard()
-const { copy: copyDate, copied: copiedDate } = useClipboard()
-
-function copyTimestampResult() {
-  if (timestamp.value) copyTimestamp(timestamp.value)
-}
-
-function copyDateResult() {
-  if (date.value) copyDate(date.value)
+  error.value = ''
 }
 
 // 初始化显示当前时间
@@ -156,13 +144,7 @@ onMounted(() => {
         >
           转换
         </UButton>
-        <UButton
-          :color="copiedTimestamp ? 'success' : 'primary'"
-          :icon="copiedTimestamp ? 'lucide:check' : 'lucide:copy'"
-          @click="copyTimestampResult"
-        >
-          {{ copiedTimestamp ? '复制成功' : '复制结果' }}
-        </UButton>
+        <Copy :text="timestamp" />
       </div>
     </div>
 
@@ -189,14 +171,15 @@ onMounted(() => {
         >
           转换
         </UButton>
-        <UButton
-          :color="copiedDate ? 'success' : 'primary'"
-          :icon="copiedDate ? 'lucide:check' : 'lucide:copy'"
-          @click="copyDateResult"
-        >
-          {{ copiedDate ? '复制成功' : '复制结果' }}
-        </UButton>
+        <Copy :text="date" />
       </div>
     </div>
+
+    <p
+      v-if="error"
+      class="text-sm text-error"
+    >
+      {{ error }}
+    </p>
   </div>
 </template>

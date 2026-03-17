@@ -3,8 +3,6 @@
  * URL 编解码工具
  * 支持 encodeURI / encodeURIComponent
  */
-import { useClipboard } from '@vueuse/core'
-
 // 工具元数据定义
 definePageMeta({
   layout: 'workspace',
@@ -80,15 +78,6 @@ function clear() {
   input.value = ''
   output.value = ''
 }
-
-// 复制结果
-const { copy, copied } = useClipboard()
-
-function copyOutput() {
-  if (output.value) {
-    copy(output.value)
-  }
-}
 </script>
 
 <template>
@@ -148,14 +137,7 @@ function copyOutput() {
             清空
           </UButton>
 
-          <UButton
-            variant="ghost"
-            :color="copied ? 'success' : 'primary'"
-            :icon="copied ? 'lucide:check' : 'lucide:copy'"
-            @click="copyOutput"
-          >
-            {{ copied ? '复制成功' : '复制结果' }}
-          </UButton>
+          <Copy :text="output" />
         </div>
 
         <UTextarea

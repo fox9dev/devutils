@@ -4,7 +4,6 @@
  * 支持 MD5、SHA-1、SHA-256、SHA-384、SHA-512，输入文本或选择文件计算摘要
  */
 import { md5 } from 'js-md5'
-import { useClipboard } from '@vueuse/core'
 
 // 工具元数据定义
 definePageMeta({
@@ -127,12 +126,6 @@ function clearAll() {
   selectedFile.value = null
 }
 
-const { copy, copied } = useClipboard()
-
-function copyOutput() {
-  if (output.value) copy(output.value)
-}
-
 // 当前算法说明
 const currentAlgoDesc = computed(() =>
   algoOptions.find(a => a.value === selectedAlgo.value)?.description ?? ''
@@ -204,15 +197,7 @@ const currentAlgoDesc = computed(() =>
         清空
       </UButton>
 
-      <UButton
-        variant="ghost"
-        :color="copied ? 'success' : 'primary'"
-        :icon="copied ? 'lucide:check' : 'lucide:copy'"
-        :disabled="!output"
-        @click="copyOutput"
-      >
-        {{ copied ? '复制成功' : '复制结果' }}
-      </UButton>
+      <Copy :text="output" />
     </div>
 
     <!-- 输出 -->
