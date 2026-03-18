@@ -13,14 +13,14 @@ const currentYear = useState('footer-year', () => dayjs().year())
 <template>
   <footer class="border-t border-default">
     <div class="container mx-auto px-4 py-6 transition-all">
-      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex sm:items-center justify-between gap-4">
         <!-- 版权信息 -->
         <div class="flex items-center gap-2 text-sm text-muted">
           <UIcon
             name="lucide:terminal"
             class="h-4 w-4 text-primary-500"
           />
-          <span>© {{ currentYear }} DevUtils. All rights reserved.</span>
+          <span class="hidden sm:inline">© {{ currentYear }} DevUtils. All rights reserved.</span>
         </div>
 
         <!-- 隐私说明 -->
@@ -29,7 +29,7 @@ const currentYear = useState('footer-year', () => dayjs().year())
             name="lucide:shield-check"
             class="h-3.5 w-3.5 text-green-500"
           />
-          <span>所有数据在本地处理，不会上传至服务器</span>
+          <span class="hidden sm:inline">所有数据在本地处理，不会上传至服务器</span>
         </div>
 
         <!-- 链接 -->
