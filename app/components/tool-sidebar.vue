@@ -36,7 +36,7 @@ const displayTools = computed(() => searchTools(searchQuery.value))
   >
     <!-- 顶部操作栏：统一结构，折叠时只显示居中折叠按钮 -->
     <div
-      class="grid border-b border-default items-center transition-[grid-template-columns] duration-300 ease-out"
+      class="grid border-b border-default items-center transition-[grid-template-columns] duration-300 ease-out h-13"
       :class="[
         collapsed ? 'grid-cols-1 gap-0 p-2' : 'grid-cols-[1fr_auto] gap-2 p-2'
       ]"

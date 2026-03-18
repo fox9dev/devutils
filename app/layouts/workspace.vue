@@ -28,7 +28,7 @@ if (tool && tool.id) {
         <Transition name="tabs-bar">
           <div
             v-if="openTabs.length"
-            class="h-13 shrink-0 overflow-hidden flex items-center border-b border-default"
+            class="h-13 shrink-0 overflow-x-auto flex items-center border-b border-default scroll-px-2"
           >
             <ToolTabs />
           </div>
