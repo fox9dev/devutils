@@ -166,7 +166,7 @@ function applyPreset(preset: { value: number, unit: string }) {
         <UButton
           v-for="preset in presets"
           :key="preset.label"
-          variant="ghost"
+          variant="outline"
           @click="applyPreset(preset)"
         >
           {{ preset.label }}
