@@ -24,7 +24,8 @@
     "lorem-ipsum": "^2.0.8",
     "nuxt": "^4.2.2",
     "tailwindcss": "^4.1.18",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "yaml": "^2.8.2"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.13.0",
