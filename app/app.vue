@@ -1,4 +1,11 @@
 <script lang="ts" setup>
+const route = useRoute()
+useHead({
+  link: computed(() => [
+    { rel: 'canonical', href: `https://devutils.fox9.dev${route.path}` }
+  ])
+})
+
 const { slideDirection, openTabs } = useToolTabs()
 
 const transition = computed(() => {

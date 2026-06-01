@@ -21,8 +21,7 @@ export default defineNuxtConfig({
         { property: 'og:locale', content: 'zh_CN' }
       ],
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.svg' },
-        { rel: 'canonical', href: 'https://devutils.fox9.dev' }
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.svg' }
       ],
       script: [
         {
