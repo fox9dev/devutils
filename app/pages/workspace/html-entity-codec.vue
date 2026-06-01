@@ -28,6 +28,7 @@ type EntityMode = 'named' | 'numeric'
 const entityMode = ref<EntityMode>('named')
 const input = ref('')
 const output = ref('')
+const error = ref('')
 
 // 命名实体映射
 const namedEntityMap: Record<string, string> = {
@@ -88,16 +89,35 @@ function encodeNumeric(text: string): string {
 }
 
 function decodeEntities(text: string): string {
+  const invalidEntities: string[] = []
+  function decodeCodePoint(raw: string, radix: number, entity: string): string {
+    const codePoint = Number.parseInt(raw, radix)
+    if (
+      !Number.isInteger(codePoint)
+      || codePoint < 0
+      || codePoint > 0x10FFFF
+      || (codePoint >= 0xD800 && codePoint <= 0xDFFF)
+    ) {
+      invalidEntities.push(entity)
+      return entity
+    }
+    return String.fromCodePoint(codePoint)
+  }
+
   // 先解码命名实体
   let result = text.replace(/&[a-zA-Z]+;/g, entity => reverseNamedMap[entity] ?? entity)
   // 再解码数字实体（十进制）
-  result = result.replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number.parseInt(code)))
+  result = result.replace(/&#(\d+);/g, (entity, code) => decodeCodePoint(code, 10, entity))
   // 十六进制数字实体
-  result = result.replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCodePoint(Number.parseInt(hex, 16)))
+  result = result.replace(/&#x([0-9a-fA-F]+);/g, (entity, hex) => decodeCodePoint(hex, 16, entity))
+  if (invalidEntities.length) {
+    error.value = `发现 ${invalidEntities.length} 个无效数字实体，已保留原文本`
+  }
   return result
 }
 
 function encode() {
+  error.value = ''
   if (!input.value) {
     output.value = ''
     return
@@ -108,6 +128,7 @@ function encode() {
 }
 
 function decode() {
+  error.value = ''
   if (!input.value) {
     output.value = ''
     return
@@ -119,11 +140,13 @@ function switchValue() {
   const temp = input.value
   input.value = output.value
   output.value = temp
+  error.value = ''
 }
 
 function clear() {
   input.value = ''
   output.value = ''
+  error.value = ''
 }
 
 // 常用实体参考表
@@ -203,7 +226,15 @@ const referenceEntities = [
 
     <!-- 输出 -->
     <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-muted">输出</label>
+      <label class="text-sm font-medium text-muted">
+        输出
+        <span
+          v-if="error"
+          class="text-sm text-error"
+        >
+          {{ error }}
+        </span>
+      </label>
       <UTextarea
         v-model="output"
         :rows="8"

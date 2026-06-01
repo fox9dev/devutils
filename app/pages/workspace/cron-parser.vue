@@ -77,8 +77,9 @@ function parseField(field: string, min: number, max: number): number[] | null {
     }
 
     // 纯数字
-    const num = Number.parseInt(trimmed)
-    if (Number.isNaN(num) || num < min || num > max) return null
+    if (!/^\d+$/.test(trimmed)) return null
+    const num = Number.parseInt(trimmed, 10)
+    if (num < min || num > max) return null
     values.add(num)
   }
 
@@ -168,12 +169,13 @@ const error = computed(() => parseResult.value.error)
 function getNextExecutions(expr: string, count: number): string[] {
   const cron = parseCron(expr)
   if (!cron) return []
+  const limit = Math.max(1, Math.min(Math.trunc(Number(count) || 4), 20))
 
   const results: string[] = []
   let current = dayjs().add(1, 'minute').startOf('minute')
-  const maxIterations = count * 525600 // 按需求次数扩大搜索范围（每次至少覆盖一年）
+  const maxIterations = limit * 525600 // 按需求次数扩大搜索范围（每次至少覆盖一年）
 
-  for (let i = 0; i < maxIterations && results.length < count; i++) {
+  for (let i = 0; i < maxIterations && results.length < limit; i++) {
     const month = current.month() + 1
     const day = current.date()
     const weekday = current.day()

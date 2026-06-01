@@ -31,6 +31,12 @@ const output = ref('')
 const error = ref('')
 const indentSize = ref(2)
 
+function normalizedIndent(): number {
+  const n = Number(indentSize.value)
+  if (!Number.isFinite(n)) return 2
+  return Math.min(8, Math.max(1, Math.trunc(n)))
+}
+
 function format() {
   error.value = ''
   if (!input.value.trim()) {
@@ -39,7 +45,7 @@ function format() {
   }
   try {
     const parsed = JSON.parse(input.value)
-    output.value = JSON.stringify(parsed, null, indentSize.value)
+    output.value = JSON.stringify(parsed, null, normalizedIndent())
   } catch (e) {
     output.value = ''
     error.value = `格式化失败：${(e as Error).message}`

@@ -30,6 +30,12 @@ const output = ref('')
 const error = ref('')
 const indentSize = ref(2)
 
+function normalizedIndent(): number {
+  const n = Number(indentSize.value)
+  if (!Number.isFinite(n)) return 2
+  return Math.min(8, Math.max(1, Math.trunc(n)))
+}
+
 function clearError() {
   error.value = ''
 }
@@ -56,7 +62,7 @@ function formatYaml() {
   try {
     const parsed = parseYaml(input.value)
     output.value = stringifyYaml(parsed, {
-      indent: indentSize.value,
+      indent: normalizedIndent(),
       lineWidth: 0,
       collectionStyle: 'block'
     }).trimEnd()
@@ -74,7 +80,7 @@ function minifyYaml() {
   try {
     const parsed = parseYaml(input.value)
     output.value = stringifyYaml(parsed, {
-      indent: indentSize.value,
+      indent: normalizedIndent(),
       lineWidth: 0,
       collectionStyle: 'flow'
     }).trimEnd()
@@ -105,7 +111,7 @@ function yamlToJson() {
 
   try {
     const parsed = parseYaml(input.value)
-    output.value = JSON.stringify(parsed, null, indentSize.value) ?? 'null'
+    output.value = JSON.stringify(parsed, null, normalizedIndent()) ?? 'null'
   } catch (cause) {
     setError('YAML 转 JSON 失败', cause)
   }
@@ -120,7 +126,7 @@ function jsonToYaml() {
   try {
     const parsed = JSON.parse(input.value)
     output.value = stringifyYaml(parsed, {
-      indent: indentSize.value,
+      indent: normalizedIndent(),
       lineWidth: 0,
       collectionStyle: 'block'
     }).trimEnd()

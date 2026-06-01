@@ -33,10 +33,10 @@ interface BaseField {
 }
 
 const fields = reactive<BaseField[]>([
-  { label: '二进制 (Binary)', base: 2, prefix: '0b', value: '', placeholder: '10110', pattern: /^[01]+$/ },
-  { label: '八进制 (Octal)', base: 8, prefix: '0o', value: '', placeholder: '26', pattern: /^[0-7]+$/ },
+  { label: '二进制 (Binary)', base: 2, prefix: '0b', value: '', placeholder: '10110 或 0b10110', pattern: /^-?(?:0b)?[01]+$/i },
+  { label: '八进制 (Octal)', base: 8, prefix: '0o', value: '', placeholder: '26 或 0o26', pattern: /^-?(?:0o)?[0-7]+$/i },
   { label: '十进制 (Decimal)', base: 10, prefix: '', value: '', placeholder: '22', pattern: /^-?\d+$/ },
-  { label: '十六进制 (Hex)', base: 16, prefix: '0x', value: '', placeholder: '16', pattern: /^[0-9a-fA-F]+$/ }
+  { label: '十六进制 (Hex)', base: 16, prefix: '0x', value: '', placeholder: '16 或 0x16', pattern: /^-?(?:0x)?[0-9a-fA-F]+$/i }
 ])
 
 const error = ref('')
@@ -55,6 +55,28 @@ function getCopyText(field: BaseField) {
   }
 
   return `-${field.prefix}${field.value.slice(1)}`
+}
+
+function parseBaseValue(raw: string, field: BaseField): bigint {
+  const sign = raw.startsWith('-') ? -1n : 1n
+  let digits = sign < 0 ? raw.slice(1) : raw
+  if (field.prefix && digits.toLowerCase().startsWith(field.prefix)) {
+    digits = digits.slice(field.prefix.length)
+  }
+  const unsigned = field.base === 10
+    ? BigInt(digits)
+    : BigInt(`${field.prefix}${digits}`)
+  return sign < 0 ? -unsigned : unsigned
+}
+
+function normalizeDisplayValue(value: string, field: BaseField): string {
+  if (!field.prefix) return value
+  const sign = value.startsWith('-') ? '-' : ''
+  let digits = sign ? value.slice(1) : value
+  if (digits.toLowerCase().startsWith(field.prefix)) {
+    digits = digits.slice(field.prefix.length)
+  }
+  return `${sign}${digits.toUpperCase()}`
 }
 
 function onInput(index: number, input?: string | number) {
@@ -80,7 +102,8 @@ function onInput(index: number, input?: string | number) {
   }
 
   try {
-    const num = BigInt(field.base === 10 ? raw : field.prefix + raw)
+    const num = parseBaseValue(raw, field)
+    field.value = normalizeDisplayValue(raw, field)
     for (let i = 0; i < fields.length; i++) {
       if (i !== index) {
         fields[i]!.value = num.toString(fields[i]!.base).toUpperCase()

@@ -43,7 +43,7 @@ watch(token, (raw) => {
   error.value = ''
   decoded.value = null
 
-  const trimmed = raw.trim()
+  const trimmed = raw.trim().replace(/^Bearer\s+/i, '')
   if (!trimmed) return
 
   const parts = trimmed.split('.')
@@ -64,18 +64,18 @@ watch(token, (raw) => {
 const tokenStatus = computed(() => {
   if (!decoded.value) return null
   const payload = decoded.value.payload
-  const exp = payload.exp as number | undefined
-  const nbf = payload.nbf as number | undefined
+  const exp = getNumericDate(payload.exp)
+  const nbf = getNumericDate(payload.nbf)
 
   const now = Math.floor(Date.now() / 1000)
 
-  if (exp && exp < now) {
+  if (exp !== null && exp < now) {
     return { label: '已过期', color: 'text-error', detail: `过期于 ${dayjs.unix(exp).format('YYYY-MM-DD HH:mm:ss')}` }
   }
-  if (nbf && nbf > now) {
+  if (nbf !== null && nbf > now) {
     return { label: '未生效', color: 'text-warning', detail: `生效于 ${dayjs.unix(nbf).format('YYYY-MM-DD HH:mm:ss')}` }
   }
-  if (exp) {
+  if (exp !== null) {
     return { label: '有效', color: 'text-success', detail: `过期于 ${dayjs.unix(exp).format('YYYY-MM-DD HH:mm:ss')}` }
   }
   return { label: '无过期时间', color: 'text-muted', detail: '' }
@@ -88,13 +88,17 @@ const timeFields = computed(() => {
   const timeKeys: Record<string, string> = { iat: '签发时间', exp: '过期时间', nbf: '生效时间' }
 
   for (const [key, label] of Object.entries(timeKeys)) {
-    const val = payload[key] as number | undefined
-    if (val) {
+    const val = getNumericDate(payload[key])
+    if (val !== null) {
       fields.push({ key, label, time: dayjs.unix(val).format('YYYY-MM-DD HH:mm:ss') })
     }
   }
   return fields
 })
+
+function getNumericDate(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) ? value : null
+}
 
 function formatJson(obj: unknown): string {
   return JSON.stringify(obj, null, 2)

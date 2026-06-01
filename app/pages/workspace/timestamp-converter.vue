@@ -32,6 +32,7 @@ const unit = ref<Unit>('second')
 const timestamp = ref('')
 const date = ref('')
 const error = ref('')
+const dateFormat = computed(() => unit.value === 'second' ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD HH:mm:ss.SSS')
 
 function timestampToDate() {
   error.value = ''
@@ -52,7 +53,7 @@ function timestampToDate() {
     error.value = '时间戳超出有效范围'
     return
   }
-  date.value = dayjs(ms).format('YYYY-MM-DD HH:mm:ss')
+  date.value = dayjs(ms).format(dateFormat.value)
 }
 
 function dateToTimestamp() {
@@ -75,11 +76,10 @@ function dateToTimestamp() {
 function useNow() {
   if (unit.value === 'second') {
     timestamp.value = String(Math.floor(Date.now() / 1000))
-    timestampToDate()
   } else {
-    date.value = dayjs().format('YYYY-MM-DD HH:mm:ss')
-    dateToTimestamp()
+    timestamp.value = String(Date.now())
   }
+  timestampToDate()
 }
 
 function clear() {

@@ -3,7 +3,7 @@
  * UUID 生成工具
  * 支持 v1 / v3 / v4 / v5 / v6 / v7 各版本生成
  */
-import { v1, v3, v4, v5, v6, v7 } from 'uuid'
+import { v1, v3, v4, v5, v6, v7, validate as validateUuid } from 'uuid'
 
 // 工具元数据定义
 definePageMeta({
@@ -60,6 +60,7 @@ const count = ref(1)
 const uppercase = ref(false)
 const noHyphens = ref(false)
 const output = ref('')
+const error = ref('')
 
 // v3/v5 命名空间选择
 const namespace = ref(predefinedNamespaces[0]!.value)
@@ -106,14 +107,22 @@ function formatUUID(uuid: string): string {
 }
 
 function generate() {
+  error.value = ''
   // v3/v5 校验
   if (needsNamespace.value) {
     if (!namespace.value) {
-      output.value = '⚠️ 请输入或选择命名空间'
+      output.value = ''
+      error.value = '请输入或选择命名空间'
+      return
+    }
+    if (!validateUuid(namespace.value)) {
+      output.value = ''
+      error.value = '命名空间必须是有效的 UUID'
       return
     }
     if (!nameInput.value) {
-      output.value = '⚠️ 请输入名称'
+      output.value = ''
+      error.value = '请输入名称'
       return
     }
   }
@@ -128,6 +137,7 @@ function generate() {
 
 function clear() {
   output.value = ''
+  error.value = ''
 }
 
 // 初始化生成一个
@@ -241,6 +251,12 @@ onMounted(() => {
 
       <Copy :text="output" />
     </div>
+    <p
+      v-if="error"
+      class="text-sm text-error mb-4"
+    >
+      {{ error }}
+    </p>
 
     <!-- 输出 -->
     <UTextarea

@@ -28,6 +28,24 @@ useSeoMeta({
 const input = ref('')
 const output = ref('')
 const error = ref('')
+type Base64Variant = 'standard' | 'url-safe'
+const variant = ref<Base64Variant>('standard')
+
+function toUrlSafeBase64(value: string): string {
+  return value.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '')
+}
+
+function normalizeBase64Input(value: string): string {
+  const normalized = value.trim().replace(/\s+/g, '').replace(/-/g, '+').replace(/_/g, '/')
+  if (!normalized || normalized.length % 4 === 1 || /[^A-Za-z0-9+/=]/.test(normalized)) {
+    throw new Error('请输入有效的 Base64 文本')
+  }
+  const firstPad = normalized.indexOf('=')
+  if (firstPad !== -1 && !/^=+$/.test(normalized.slice(firstPad))) {
+    throw new Error('Base64 填充符位置无效')
+  }
+  return normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=')
+}
 
 function encode() {
   error.value = ''
@@ -41,9 +59,10 @@ function encode() {
     for (let i = 0; i < bytes.length; i++) {
       binary += String.fromCharCode(bytes[i]!)
     }
-    output.value = btoa(binary)
-  } catch {
-    error.value = '编码失败'
+    const encoded = btoa(binary)
+    output.value = variant.value === 'url-safe' ? toUrlSafeBase64(encoded) : encoded
+  } catch (e) {
+    error.value = `编码失败：${(e as Error).message}`
     output.value = ''
   }
 }
@@ -55,14 +74,14 @@ function decode() {
     return
   }
   try {
-    const binary = atob(input.value)
+    const binary = atob(normalizeBase64Input(input.value))
     const bytes = new Uint8Array(binary.length)
     for (let i = 0; i < binary.length; i++) {
       bytes[i] = binary.charCodeAt(i)
     }
-    output.value = new TextDecoder().decode(bytes)
-  } catch {
-    error.value = '解码失败'
+    output.value = new TextDecoder('utf-8', { fatal: true }).decode(bytes)
+  } catch (e) {
+    error.value = `解码失败：${(e as Error).message}`
     output.value = ''
   }
 }
@@ -71,6 +90,7 @@ function switchValue() {
   const temp = input.value
   input.value = output.value
   output.value = temp
+  error.value = ''
 }
 
 function clear() {
@@ -92,6 +112,13 @@ function clear() {
     </div>
 
     <div class="flex flex-wrap items-center gap-2">
+      <SegmentControl
+        v-model="variant"
+        :options="[
+          { label: '标准', value: 'standard' as Base64Variant },
+          { label: 'URL-safe', value: 'url-safe' as Base64Variant }
+        ]"
+      />
       <UButton
         icon="lucide:arrow-down-to-line"
         color="success"

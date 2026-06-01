@@ -48,6 +48,7 @@ const algoOptions: AlgoOption[] = [
 const selectedAlgo = ref<HashAlgo>('sha256')
 const input = ref('')
 const output = ref('')
+const error = ref('')
 const computing = ref(false)
 const selectedFile = ref<File | null>(null)
 
@@ -82,6 +83,7 @@ async function computeHash(data: Uint8Array): Promise<string> {
 }
 
 async function hashText() {
+  error.value = ''
   if (!input.value) {
     output.value = ''
     return
@@ -93,12 +95,16 @@ async function hashText() {
     const data = encoder.encode(input.value)
     const hash = await computeHash(data)
     output.value = hash
+  } catch (e) {
+    error.value = `计算失败：${(e as Error).message}`
+    output.value = ''
   } finally {
     computing.value = false
   }
 }
 
 async function hashFile(file: File) {
+  error.value = ''
   computing.value = true
   output.value = ''
   try {
@@ -107,6 +113,9 @@ async function hashFile(file: File) {
     const hash = await computeHash(data)
     output.value = hash
     input.value = ''
+  } catch (e) {
+    error.value = `文件摘要计算失败：${(e as Error).message}`
+    output.value = ''
   } finally {
     computing.value = false
   }
@@ -120,9 +129,28 @@ watch(input, (val) => {
   if (val) selectedFile.value = null
 })
 
+watch(selectedAlgo, async () => {
+  if (selectedFile.value) {
+    await hashFile(selectedFile.value)
+  } else if (input.value) {
+    await hashText()
+  } else {
+    output.value = ''
+  }
+})
+
+async function computeActiveHash() {
+  if (selectedFile.value) {
+    await hashFile(selectedFile.value)
+  } else {
+    await hashText()
+  }
+}
+
 function clearAll() {
   input.value = ''
   output.value = ''
+  error.value = ''
   selectedFile.value = null
 }
 
@@ -182,8 +210,8 @@ const currentAlgoDesc = computed(() =>
         icon="lucide:play"
         color="success"
         :loading="computing"
-        :disabled="!input && !output"
-        @click="hashText"
+        :disabled="!input && !selectedFile"
+        @click="computeActiveHash"
       >
         计算摘要
       </UButton>
@@ -199,6 +227,12 @@ const currentAlgoDesc = computed(() =>
 
       <Copy :text="output" />
     </div>
+    <p
+      v-if="error"
+      class="text-sm text-error"
+    >
+      {{ error }}
+    </p>
 
     <!-- 输出 -->
     <div class="flex flex-col gap-2">

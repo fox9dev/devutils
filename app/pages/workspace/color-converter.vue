@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * 颜色转换器
- * 在 HEX / HEX8 / RGB / HSL / HSV / CMYK / OKLCH 间互转，实时预览
+ * 在 HEX / HEX8 / RGB / HSL / HSV / CMYK 间互转，并输出 OKLCH，实时预览
  */
 import { colord, extend } from 'colord'
 import cmykPlugin from 'colord/plugins/cmyk'
@@ -16,17 +16,17 @@ definePageMeta({
     id: 'color-converter',
     icon: 'lucide:palette',
     name: '颜色转换',
-    description: '在 HEX、HEX8、RGB、HSL、HSV、CMYK、OKLCH 间互转，实时预览',
+    description: '在 HEX、HEX8、RGB、HSL、HSV、CMYK 间互转，并输出 OKLCH，实时预览',
     keywords: ['color', 'hex', 'hex8', 'rgb', 'hsl', 'hsv', 'cmyk', 'oklch', '颜色', '转换', '色值', 'color converter', '颜色转换']
   }
 })
 
 useSeoMeta({
-  title: '颜色转换 - 在线 HEX/RGB/HSL/OKLCH 颜色互转工具',
-  description: '免费在线颜色转换工具，支持 HEX、HEX8、RGB、HSL、HSV、CMYK、OKLCH 互转，实时预览颜色。本地运行，隐私安全。',
+  title: '颜色转换 - 在线 HEX/RGB/HSL 颜色互转工具',
+  description: '免费在线颜色转换工具，支持 HEX、HEX8、RGB、HSL、HSV、CMYK 互转，并输出 OKLCH，实时预览颜色。本地运行，隐私安全。',
   keywords: '颜色转换,HEX转RGB,HEX8,RGB转HSL,OKLCH,在线颜色转换,color converter,色值转换',
-  ogTitle: 'DevUtils - 颜色转换 - 在线 HEX/RGB/HSL/OKLCH 颜色互转工具',
-  ogDescription: '免费在线颜色转换工具，支持 HEX、HEX8、RGB、HSL、HSV、CMYK、OKLCH 互转。',
+  ogTitle: 'DevUtils - 颜色转换 - 在线 HEX/RGB/HSL 颜色互转工具',
+  ogDescription: '免费在线颜色转换工具，支持 HEX、HEX8、RGB、HSL、HSV、CMYK 互转，并输出 OKLCH。',
   ogUrl: 'https://devutils.fox9.dev/workspace/color-converter'
 })
 
@@ -220,7 +220,7 @@ function clear() {
 
 <template>
   <div class="flex flex-col gap-4">
-    <Note title="输入任意颜色值（HEX、RGB、HSL、HSV、CMYK 或颜色名称），自动转换为所有格式。" />
+    <Note title="输入任意颜色值（HEX、RGB、HSL、HSV、CMYK 或颜色名称），自动转换为常用格式并输出 OKLCH。" />
 
     <!-- 输入 + 颜色拾取器 -->
     <div class="flex flex-col gap-2 flex-1">

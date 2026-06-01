@@ -40,6 +40,7 @@ const useSymbols = ref(true)
 const customSymbols = ref('')
 const count = ref(1)
 const output = ref('')
+const error = ref('')
 
 // 实际使用的符号集：有自定义则用自定义，否则用默认
 const symbolSet = computed(() => {
@@ -50,11 +51,14 @@ const symbolSet = computed(() => {
 // 至少选一种字符类型
 const canGenerate = computed(() => useLower.value || useUpper.value || useDigits.value || useSymbols.value)
 
-/** 使用 crypto.getRandomValues 在 [0, max) 内取随机整数 */
+/** 使用 crypto.getRandomValues 在 [0, max) 内无偏取随机整数 */
 function secureRandomInt(max: number): number {
   if (max <= 0) return 0
   const array = new Uint32Array(1)
-  crypto.getRandomValues(array)
+  const limit = 0x100000000 - (0x100000000 % max)
+  do {
+    crypto.getRandomValues(array)
+  } while (array[0]! >= limit)
   return array[0]! % max
 }
 
@@ -99,9 +103,11 @@ function generateOne(): string {
 
 function generate() {
   if (!canGenerate.value) {
-    output.value = '⚠️ 请至少勾选一种字符类型'
+    error.value = '请至少勾选一种字符类型'
+    output.value = ''
     return
   }
+  error.value = ''
   const num = Math.max(1, Math.min(count.value || 1, 100))
   const results: string[] = []
   for (let i = 0; i < num; i++) {
@@ -112,6 +118,7 @@ function generate() {
 
 function clear() {
   output.value = ''
+  error.value = ''
 }
 
 onMounted(() => {
@@ -199,6 +206,12 @@ onMounted(() => {
       </UButton>
       <Copy :text="output" />
     </div>
+    <p
+      v-if="error"
+      class="text-sm text-error"
+    >
+      {{ error }}
+    </p>
 
     <!-- 输出 -->
     <div class="flex flex-col gap-2">

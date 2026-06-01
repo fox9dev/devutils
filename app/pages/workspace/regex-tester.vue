@@ -75,6 +75,12 @@ interface MatchResult {
   namedGroups: Record<string, string>
 }
 
+interface HighlightPart {
+  text: string
+  matched: boolean
+  colorClass?: string
+}
+
 const matches = computed<MatchResult[]>(() => {
   const re = compiledRegex.value
   if (!re || !testText.value) return []
@@ -109,35 +115,28 @@ const matches = computed<MatchResult[]>(() => {
   return results
 })
 
-const highlightedHtml = computed(() => {
-  if (!testText.value) return ''
-  if (!matches.value.length) return escapeHtml(testText.value)
-
+const highlightedParts = computed<HighlightPart[]>(() => {
+  if (!testText.value) return []
+  if (!matches.value.length) return [{ text: testText.value, matched: false }]
   const text = testText.value
-  let html = ''
   let lastIndex = 0
+  const parts: HighlightPart[] = []
   const colors = ['bg-yellow-400/40', 'bg-cyan-400/40', 'bg-pink-400/40', 'bg-green-400/40']
 
   for (let i = 0; i < matches.value.length; i++) {
     const m = matches.value[i]!
     const color = colors[i % colors.length]
-    html += escapeHtml(text.slice(lastIndex, m.index))
-    html += `<mark class="${color} rounded px-0.5">${escapeHtml(m.match)}</mark>`
+    if (m.index > lastIndex) {
+      parts.push({ text: text.slice(lastIndex, m.index), matched: false })
+    }
+    parts.push({ text: m.match || '∅', matched: true, colorClass: color })
     lastIndex = m.index + m.match.length
   }
-  html += escapeHtml(text.slice(lastIndex))
-  return html
+  if (lastIndex < text.length) {
+    parts.push({ text: text.slice(lastIndex), matched: false })
+  }
+  return parts
 })
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/\n/g, '<br>')
-    .replace(/ /g, '&nbsp;')
-}
 
 const regexString = computed(() => pattern.value ? `/${pattern.value}/${flags.value}` : '')
 
@@ -222,8 +221,18 @@ function clear() {
       <label class="text-sm font-medium text-muted">匹配高亮</label>
       <div
         class="min-h-[100px] rounded-lg border border-default bg-elevated p-4 font-mono text-sm leading-relaxed whitespace-pre-wrap"
-        v-html="highlightedHtml"
-      />
+      >
+        <template
+          v-for="(part, index) in highlightedParts"
+          :key="index"
+        >
+          <mark
+            v-if="part.matched"
+            :class="[part.colorClass, 'rounded px-0.5']"
+          >{{ part.text }}</mark>
+          <span v-else>{{ part.text }}</span>
+        </template>
+      </div>
     </div>
 
     <div

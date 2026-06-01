@@ -37,33 +37,31 @@ const input = ref('')
 
 // 输出
 const output = ref('')
+const error = ref('')
 
-// 编码
-function encode() {
+function setResult(action: '编码' | '解码', handler: (value: string) => string) {
+  error.value = ''
   if (!input.value) {
     output.value = ''
     return
   }
 
-  if (encodeType.value === EncodeType.URI) {
-    output.value = encodeURI(input.value)
-  } else {
-    output.value = encodeURIComponent(input.value)
+  try {
+    output.value = handler(input.value)
+  } catch (e) {
+    output.value = ''
+    error.value = `${action}失败：${(e as Error).message}`
   }
+}
+
+// 编码
+function encode() {
+  setResult('编码', value => encodeType.value === EncodeType.URI ? encodeURI(value) : encodeURIComponent(value))
 }
 
 // 解码
 function decode() {
-  if (!input.value) {
-    output.value = ''
-    return
-  }
-
-  if (encodeType.value === EncodeType.URI) {
-    output.value = decodeURI(input.value)
-  } else {
-    output.value = decodeURIComponent(input.value)
-  }
+  setResult('解码', value => encodeType.value === EncodeType.URI ? decodeURI(value) : decodeURIComponent(value))
 }
 
 // 切换模式时交换输入输出
@@ -71,12 +69,14 @@ function switchValue() {
   const temp = input.value
   input.value = output.value
   output.value = temp
+  error.value = ''
 }
 
 // 清空
 function clear() {
   input.value = ''
   output.value = ''
+  error.value = ''
 }
 </script>
 
@@ -144,7 +144,14 @@ function clear() {
           v-model="output"
           :rows="10"
           placeholder="处理结果"
+          readonly
         />
+        <p
+          v-if="error"
+          class="text-sm text-error"
+        >
+          {{ error }}
+        </p>
       </div>
     </div>
   </div>
