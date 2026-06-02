@@ -102,73 +102,81 @@ function clear() {
 
 <template>
   <div class="flex flex-col gap-4">
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-muted">输入</label>
-      <UTextarea
-        v-model="input"
-        :rows="8"
-        placeholder="输入要编码或解码的文本..."
-      />
-    </div>
+    <ToolTextSplit>
+      <template #input>
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium text-muted">输入</label>
+          <UTextarea
+            v-model="input"
+            :rows="8"
+            placeholder="输入要编码或解码的文本..."
+          />
+        </div>
+      </template>
 
-    <div class="flex flex-wrap items-center gap-2">
-      <SegmentControl
-        v-model="variant"
-        :options="[
-          { label: '标准', value: 'standard' as Base64Variant },
-          { label: 'URL-safe', value: 'url-safe' as Base64Variant }
-        ]"
-      />
-      <UButton
-        icon="lucide:arrow-down-to-line"
-        color="success"
-        @click="encode"
-      >
-        编码
-      </UButton>
-      <UButton
-        icon="lucide:arrow-up-from-line"
-        color="warning"
-        @click="decode"
-      >
-        解码
-      </UButton>
-      <UButton
-        variant="ghost"
-        icon="lucide:arrow-up-down"
-        color="secondary"
-        @click="switchValue"
-      >
-        交换
-      </UButton>
-      <UButton
-        variant="ghost"
-        color="error"
-        icon="lucide:trash-2"
-        @click="clear"
-      >
-        清空
-      </UButton>
-      <Copy :text="output" />
-    </div>
+      <template #actions>
+        <div class="flex flex-wrap items-center gap-2">
+          <SegmentControl
+            v-model="variant"
+            :options="[
+              { label: '标准', value: 'standard' as Base64Variant },
+              { label: 'URL-safe', value: 'url-safe' as Base64Variant }
+            ]"
+          />
+          <UButton
+            icon="lucide:arrow-down-to-line"
+            color="success"
+            @click="encode"
+          >
+            编码
+          </UButton>
+          <UButton
+            icon="lucide:arrow-up-from-line"
+            color="warning"
+            @click="decode"
+          >
+            解码
+          </UButton>
+          <UButton
+            variant="ghost"
+            icon="lucide:arrow-up-down"
+            color="secondary"
+            @click="switchValue"
+          >
+            交换
+          </UButton>
+          <UButton
+            variant="ghost"
+            color="error"
+            icon="lucide:trash-2"
+            @click="clear"
+          >
+            清空
+          </UButton>
+          <Copy :text="output" />
+        </div>
+      </template>
 
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-muted">
-        输出
-        <span
-          v-if="error"
-          class="text-sm text-error"
-        >
-          {{ error }}
-        </span>
-      </label>
-      <UTextarea
-        v-model="output"
-        :rows="8"
-        placeholder="结果将显示在这里"
-        readonly
-        class="font-mono"
-      />
-    </div>
+      <template #output>
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium text-muted">
+            输出
+            <span
+              v-if="error"
+              class="text-sm text-error"
+            >
+              {{ error }}
+            </span>
+          </label>
+          <UTextarea
+            v-model="output"
+            :rows="8"
+            placeholder="结果将显示在这里"
+            readonly
+            class="font-mono"
+          />
+        </div>
+      </template>
+    </ToolTextSplit>
   </div>
 </template>

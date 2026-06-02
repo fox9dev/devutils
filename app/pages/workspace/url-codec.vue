@@ -88,15 +88,20 @@ function clear() {
       title="URIComponent：除英文字母、数字和 - _ . ! ~ * ' ( ) 之外的所有字符都进行编码"
     />
 
-    <div class="flex flex-col gap-2">
-      <UTextarea
-        v-model="input"
-        :rows="10"
-        placeholder="输入要处理的文本"
-      />
+    <ToolTextSplit>
+      <template #input>
+        <div class="flex min-w-0 flex-col gap-2">
+          <label class="text-sm font-medium text-muted">输入</label>
+          <UTextarea
+            v-model="input"
+            :rows="10"
+            placeholder="输入要处理的文本"
+            class="w-full"
+          />
+        </div>
+      </template>
 
-      <!-- 操作栏 -->
-      <div class="flex flex-col gap-2">
+      <template #actions>
         <div class="flex flex-wrap items-center gap-2">
           <!-- 编码类型 -->
           <SegmentControl
@@ -139,20 +144,26 @@ function clear() {
 
           <Copy :text="output" />
         </div>
+      </template>
 
-        <UTextarea
-          v-model="output"
-          :rows="10"
-          placeholder="处理结果"
-          readonly
-        />
-        <p
-          v-if="error"
-          class="text-sm text-error"
-        >
-          {{ error }}
-        </p>
-      </div>
-    </div>
+      <template #output>
+        <div class="flex min-w-0 flex-col gap-2">
+          <label class="text-sm font-medium text-muted">输出</label>
+          <UTextarea
+            v-model="output"
+            :rows="10"
+            placeholder="处理结果"
+            readonly
+            class="w-full"
+          />
+          <p
+            v-if="error"
+            class="text-sm text-error"
+          >
+            {{ error }}
+          </p>
+        </div>
+      </template>
+    </ToolTextSplit>
   </div>
 </template>

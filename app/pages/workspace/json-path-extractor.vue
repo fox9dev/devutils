@@ -221,8 +221,8 @@ function loadSample() {
   <div class="flex flex-col gap-4">
     <Note title="v1 支持 $.a.b、items[0]、items[*].id、[&quot;key-with-dash&quot;]；暂不支持 filter、slice、recursive descent。" />
 
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <div class="flex flex-col gap-2">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div class="flex min-w-0 flex-col gap-2">
         <label class="text-sm font-medium text-muted">JSON</label>
         <UTextarea
           v-model="jsonInput"
@@ -231,7 +231,7 @@ function loadSample() {
           class="font-mono text-sm"
         />
       </div>
-      <div class="flex flex-col gap-2">
+      <div class="flex min-w-0 flex-col gap-2">
         <label class="text-sm font-medium text-muted">路径表达式</label>
         <UInput
           v-model="pathInput"

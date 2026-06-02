@@ -96,85 +96,93 @@ function clear() {
 
 <template>
   <div class="flex flex-col gap-4">
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-muted">输入 JSON</label>
-      <UTextarea
-        v-model="input"
-        :rows="12"
-        placeholder="{&quot;key&quot;: &quot;value&quot;, &quot;array&quot;: [1, 2, 3]}"
-        class="font-mono text-sm"
-      />
-    </div>
+    <ToolTextSplit>
+      <template #input>
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium text-muted">输入 JSON</label>
+          <UTextarea
+            v-model="input"
+            :rows="12"
+            placeholder="{&quot;key&quot;: &quot;value&quot;, &quot;array&quot;: [1, 2, 3]}"
+            class="font-mono text-sm"
+          />
+        </div>
+      </template>
 
-    <div class="flex flex-wrap items-center gap-2">
-      <div class="flex items-center gap-2">
-        <label class="text-sm text-muted">缩进</label>
-        <UInput
-          v-model.number="indentSize"
-          type="number"
-          :min="1"
-          :max="8"
-          class="w-16"
-        />
-        <span class="text-xs text-dimmed">空格</span>
-      </div>
-      <UButton
-        icon="lucide:align-justify"
-        color="success"
-        @click="format"
-      >
-        格式化
-      </UButton>
-      <UButton
-        icon="lucide:minimize-2"
-        color="primary"
-        @click="minify"
-      >
-        压缩
-      </UButton>
-      <UButton
-        icon="lucide:circle-check"
-        color="info"
-        @click="validate"
-      >
-        校验
-      </UButton>
-      <UButton
-        variant="ghost"
-        icon="lucide:arrow-up-down"
-        color="secondary"
-        @click="switchValue"
-      >
-        交换
-      </UButton>
-      <UButton
-        variant="ghost"
-        color="error"
-        icon="lucide:trash-2"
-        @click="clear"
-      >
-        清空
-      </UButton>
-      <Copy :text="output" />
-    </div>
+      <template #actions>
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="flex items-center gap-2">
+            <label class="text-sm text-muted">缩进</label>
+            <UInput
+              v-model.number="indentSize"
+              type="number"
+              :min="1"
+              :max="8"
+              class="w-16"
+            />
+            <span class="text-xs text-dimmed">空格</span>
+          </div>
+          <UButton
+            icon="lucide:align-justify"
+            color="success"
+            @click="format"
+          >
+            格式化
+          </UButton>
+          <UButton
+            icon="lucide:minimize-2"
+            color="primary"
+            @click="minify"
+          >
+            压缩
+          </UButton>
+          <UButton
+            icon="lucide:circle-check"
+            color="info"
+            @click="validate"
+          >
+            校验
+          </UButton>
+          <UButton
+            variant="ghost"
+            icon="lucide:arrow-up-down"
+            color="secondary"
+            @click="switchValue"
+          >
+            交换
+          </UButton>
+          <UButton
+            variant="ghost"
+            color="error"
+            icon="lucide:trash-2"
+            @click="clear"
+          >
+            清空
+          </UButton>
+          <Copy :text="output" />
+        </div>
+      </template>
 
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-muted">
-        输出
-        <span
-          v-if="error"
-          class="text-sm text-error"
-        >
-          {{ error }}
-        </span>
-      </label>
-      <UTextarea
-        v-model="output"
-        :rows="12"
-        placeholder="格式化或压缩结果"
-        readonly
-        class="font-mono text-sm"
-      />
-    </div>
+      <template #output>
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium text-muted">
+            输出
+            <span
+              v-if="error"
+              class="text-sm text-error"
+            >
+              {{ error }}
+            </span>
+          </label>
+          <UTextarea
+            v-model="output"
+            :rows="12"
+            placeholder="格式化或压缩结果"
+            readonly
+            class="font-mono text-sm"
+          />
+        </div>
+      </template>
+    </ToolTextSplit>
   </div>
 </template>

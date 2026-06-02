@@ -157,100 +157,108 @@ function clear() {
       title="格式化和互转会重新序列化内容，原始注释与引号风格不会保留。"
     />
 
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-muted">输入 YAML 或 JSON</label>
-      <UTextarea
-        v-model="input"
-        :rows="12"
-        placeholder="name: DevUtils&#10;features:&#10;  - yaml&#10;  - json"
-        class="font-mono text-sm"
-      />
-    </div>
+    <ToolTextSplit>
+      <template #input>
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium text-muted">输入 YAML 或 JSON</label>
+          <UTextarea
+            v-model="input"
+            :rows="12"
+            placeholder="name: DevUtils&#10;features:&#10;  - yaml&#10;  - json"
+            class="font-mono text-sm"
+          />
+        </div>
+      </template>
 
-    <div class="flex flex-wrap items-center gap-2">
-      <div class="flex items-center gap-2">
-        <label class="text-sm text-muted">缩进</label>
-        <UInput
-          v-model.number="indentSize"
-          type="number"
-          :min="1"
-          :max="8"
-          class="w-16"
-        />
-        <span class="text-xs text-dimmed">空格</span>
-      </div>
+      <template #actions>
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="flex items-center gap-2">
+            <label class="text-sm text-muted">缩进</label>
+            <UInput
+              v-model.number="indentSize"
+              type="number"
+              :min="1"
+              :max="8"
+              class="w-16"
+            />
+            <span class="text-xs text-dimmed">空格</span>
+          </div>
 
-      <UButton
-        icon="lucide:align-justify"
-        color="success"
-        @click="formatYaml"
-      >
-        格式化 YAML
-      </UButton>
-      <UButton
-        icon="lucide:minimize-2"
-        color="primary"
-        @click="minifyYaml"
-      >
-        压缩 YAML
-      </UButton>
-      <UButton
-        icon="lucide:circle-check"
-        color="info"
-        @click="validateYaml"
-      >
-        校验 YAML
-      </UButton>
-      <UButton
-        icon="lucide:arrow-right-left"
-        color="warning"
-        @click="yamlToJson"
-      >
-        YAML 转 JSON
-      </UButton>
-      <UButton
-        icon="lucide:repeat-2"
-        color="neutral"
-        @click="jsonToYaml"
-      >
-        JSON 转 YAML
-      </UButton>
-      <UButton
-        variant="ghost"
-        icon="lucide:arrow-up-down"
-        color="secondary"
-        @click="switchValue"
-      >
-        交换
-      </UButton>
-      <UButton
-        variant="ghost"
-        color="error"
-        icon="lucide:trash-2"
-        @click="clear"
-      >
-        清空
-      </UButton>
-      <Copy :text="output" />
-    </div>
+          <UButton
+            icon="lucide:align-justify"
+            color="success"
+            @click="formatYaml"
+          >
+            格式化 YAML
+          </UButton>
+          <UButton
+            icon="lucide:minimize-2"
+            color="primary"
+            @click="minifyYaml"
+          >
+            压缩 YAML
+          </UButton>
+          <UButton
+            icon="lucide:circle-check"
+            color="info"
+            @click="validateYaml"
+          >
+            校验 YAML
+          </UButton>
+          <UButton
+            icon="lucide:arrow-right-left"
+            color="warning"
+            @click="yamlToJson"
+          >
+            YAML 转 JSON
+          </UButton>
+          <UButton
+            icon="lucide:repeat-2"
+            color="neutral"
+            @click="jsonToYaml"
+          >
+            JSON 转 YAML
+          </UButton>
+          <UButton
+            variant="ghost"
+            icon="lucide:arrow-up-down"
+            color="secondary"
+            @click="switchValue"
+          >
+            交换
+          </UButton>
+          <UButton
+            variant="ghost"
+            color="error"
+            icon="lucide:trash-2"
+            @click="clear"
+          >
+            清空
+          </UButton>
+          <Copy :text="output" />
+        </div>
+      </template>
 
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-muted">
-        输出
-        <span
-          v-if="error"
-          class="text-sm text-error"
-        >
-          {{ error }}
-        </span>
-      </label>
-      <UTextarea
-        v-model="output"
-        :rows="12"
-        placeholder="格式化、压缩或转换结果"
-        readonly
-        class="font-mono text-sm"
-      />
-    </div>
+      <template #output>
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium text-muted">
+            输出
+            <span
+              v-if="error"
+              class="text-sm text-error"
+            >
+              {{ error }}
+            </span>
+          </label>
+          <UTextarea
+            v-model="output"
+            :rows="12"
+            placeholder="格式化、压缩或转换结果"
+            readonly
+            class="font-mono text-sm"
+          />
+        </div>
+      </template>
+    </ToolTextSplit>
   </div>
 </template>

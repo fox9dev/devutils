@@ -179,84 +179,52 @@ function formatBytes(bytes: number): string {
   <div class="flex flex-col gap-4">
     <Note title="Data URI 会把内容直接嵌入 URL，适合小图标、样式片段或测试数据；大文件会生成很长的字符串。" />
 
-    <div class="flex flex-col gap-3 rounded-lg border border-default bg-elevated p-4">
-      <div class="flex flex-wrap items-center gap-2">
-        <SegmentControl
-          v-model="source"
-          :options="[
-            { label: '文本', value: 'text' as EncodeSource },
-            { label: '文件', value: 'file' as EncodeSource }
-          ]"
-        />
-        <UCheckbox
-          v-model="useBase64"
-          label="Base64"
-        />
+    <div class="flex flex-col gap-4 rounded-lg border border-default bg-elevated p-4">
+      <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-sm font-medium text-muted">编码</span>
+          <SegmentControl
+            v-model="source"
+            :options="[
+              { label: '文本', value: 'text' as EncodeSource },
+              { label: '文件', value: 'file' as EncodeSource }
+            ]"
+          />
+          <UCheckbox
+            v-model="useBase64"
+            label="Base64"
+          />
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <UButton
+            icon="lucide:play"
+            color="success"
+            @click="encodeDataUri"
+          >
+            编码
+          </UButton>
+          <UButton
+            icon="lucide:arrow-down"
+            variant="ghost"
+            color="secondary"
+            :disabled="!encodedOutput"
+            @click="useEncodedAsInput"
+          >
+            用作解码输入
+          </UButton>
+          <UButton
+            variant="ghost"
+            color="error"
+            icon="lucide:trash-2"
+            @click="clear"
+          >
+            清空
+          </UButton>
+          <Copy :text="encodedOutput" />
+        </div>
       </div>
 
-      <div class="flex flex-col gap-2">
-        <label class="text-sm font-medium text-muted">MIME Type</label>
-        <UInput
-          v-model="mimeType"
-          placeholder="text/plain;charset=utf-8"
-          class="font-mono"
-        />
-      </div>
-
-      <div
-        v-if="source === 'text'"
-        class="flex flex-col gap-2"
-      >
-        <label class="text-sm font-medium text-muted">文本内容</label>
-        <UTextarea
-          v-model="textInput"
-          :rows="5"
-          placeholder="输入要编码的文本"
-        />
-      </div>
-
-      <div
-        v-else
-        class="flex flex-col gap-2"
-      >
-        <label class="text-sm font-medium text-muted">选择文件</label>
-        <UFileUpload
-          v-model="selectedFile"
-          variant="area"
-          label="选择文件编码为 Data URI"
-          description="所有内容只在本地浏览器处理"
-          layout="list"
-          icon="lucide:upload"
-        />
-      </div>
-
-      <div class="flex flex-wrap items-center gap-2">
-        <UButton
-          icon="lucide:play"
-          color="success"
-          @click="encodeDataUri"
-        >
-          编码
-        </UButton>
-        <UButton
-          icon="lucide:arrow-down"
-          variant="ghost"
-          color="secondary"
-          :disabled="!encodedOutput"
-          @click="useEncodedAsInput"
-        >
-          用作解码输入
-        </UButton>
-        <UButton
-          variant="ghost"
-          color="error"
-          icon="lucide:trash-2"
-          @click="clear"
-        >
-          清空
-        </UButton>
-        <Copy :text="encodedOutput" />
-      </div>
       <p
         v-if="encodeError"
         class="text-sm text-error"
@@ -264,36 +232,74 @@ function formatBytes(bytes: number): string {
         {{ encodeError }}
       </p>
 
-      <UTextarea
-        :model-value="encodedOutput"
-        :rows="6"
-        placeholder="Data URI 编码结果"
-        readonly
-        class="font-mono text-sm"
-      />
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="flex min-w-0 flex-col gap-3">
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-medium text-muted">MIME Type</label>
+            <UInput
+              v-model="mimeType"
+              placeholder="text/plain;charset=utf-8"
+              class="font-mono"
+            />
+          </div>
+
+          <div
+            v-if="source === 'text'"
+            class="flex flex-col gap-2"
+          >
+            <label class="text-sm font-medium text-muted">文本内容</label>
+            <UTextarea
+              v-model="textInput"
+              :rows="8"
+              placeholder="输入要编码的文本"
+              class="w-full"
+            />
+          </div>
+
+          <div
+            v-else
+            class="flex flex-col gap-2"
+          >
+            <label class="text-sm font-medium text-muted">选择文件</label>
+            <UFileUpload
+              v-model="selectedFile"
+              variant="area"
+              label="选择文件编码为 Data URI"
+              description="所有内容只在本地浏览器处理"
+              layout="list"
+              icon="lucide:upload"
+            />
+          </div>
+        </div>
+
+        <div class="flex min-w-0 flex-col gap-2">
+          <label class="text-sm font-medium text-muted">Data URI 编码结果</label>
+          <UTextarea
+            :model-value="encodedOutput"
+            :rows="12"
+            placeholder="Data URI 编码结果"
+            readonly
+            class="w-full font-mono text-sm"
+          />
+        </div>
+      </div>
     </div>
 
-    <div class="flex flex-col gap-3 rounded-lg border border-default bg-elevated p-4">
-      <div class="flex flex-col gap-2">
-        <label class="text-sm font-medium text-muted">Data URI 输入</label>
-        <UTextarea
-          v-model="decodeInput"
-          :rows="5"
-          placeholder="data:text/plain;base64,SGVsbG8="
-          class="font-mono text-sm"
-        />
+    <div class="flex flex-col gap-4 rounded-lg border border-default bg-elevated p-4">
+      <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <span class="text-sm font-medium text-muted">解码</span>
+        <div class="flex flex-wrap items-center gap-2">
+          <UButton
+            icon="lucide:package-open"
+            color="warning"
+            @click="decodeDataUri"
+          >
+            解码
+          </UButton>
+          <Copy :text="decoded?.textPreview ?? ''" />
+        </div>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2">
-        <UButton
-          icon="lucide:package-open"
-          color="warning"
-          @click="decodeDataUri"
-        >
-          解码
-        </UButton>
-        <Copy :text="decoded?.textPreview ?? ''" />
-      </div>
       <p
         v-if="decodeError"
         class="text-sm text-error"
@@ -301,49 +307,70 @@ function formatBytes(bytes: number): string {
         {{ decodeError }}
       </p>
 
-      <template v-if="decoded">
-        <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <div class="rounded-lg border border-default bg-default p-3">
-            <div class="text-xs text-dimmed">
-              MIME
-            </div>
-            <div class="font-mono text-sm text-default break-all">
-              {{ decoded.mimeType }}
-            </div>
-          </div>
-          <div class="rounded-lg border border-default bg-default p-3">
-            <div class="text-xs text-dimmed">
-              编码
-            </div>
-            <div class="font-mono text-sm text-default">
-              {{ decoded.base64 ? 'base64' : 'percent-encoded' }}
-            </div>
-          </div>
-          <div class="rounded-lg border border-default bg-default p-3">
-            <div class="text-xs text-dimmed">
-              大小
-            </div>
-            <div class="font-mono text-sm text-default">
-              {{ formatBytes(decoded.bytes.length) }}
-            </div>
-          </div>
+      <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div class="flex min-w-0 flex-col gap-2">
+          <label class="text-sm font-medium text-muted">Data URI 输入</label>
+          <UTextarea
+            v-model="decodeInput"
+            :rows="12"
+            placeholder="data:text/plain;base64,SGVsbG8="
+            class="w-full font-mono text-sm"
+          />
         </div>
 
-        <img
-          v-if="decoded.imagePreview"
-          :src="decoded.imagePreview"
-          alt="Data URI preview"
-          class="max-h-72 max-w-full rounded-lg border border-default object-contain"
-        >
+        <div class="flex min-w-0 flex-col gap-3">
+          <label class="text-sm font-medium text-muted">解码结果</label>
+          <template v-if="decoded">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 md:grid-cols-1 lg:grid-cols-3">
+              <div class="rounded-lg border border-default bg-default p-3">
+                <div class="text-xs text-dimmed">
+                  MIME
+                </div>
+                <div class="font-mono text-sm text-default break-all">
+                  {{ decoded.mimeType }}
+                </div>
+              </div>
+              <div class="rounded-lg border border-default bg-default p-3">
+                <div class="text-xs text-dimmed">
+                  编码
+                </div>
+                <div class="font-mono text-sm text-default">
+                  {{ decoded.base64 ? 'base64' : 'percent-encoded' }}
+                </div>
+              </div>
+              <div class="rounded-lg border border-default bg-default p-3">
+                <div class="text-xs text-dimmed">
+                  大小
+                </div>
+                <div class="font-mono text-sm text-default">
+                  {{ formatBytes(decoded.bytes.length) }}
+                </div>
+              </div>
+            </div>
 
-        <UTextarea
-          v-if="decoded.textPreview"
-          :model-value="decoded.textPreview"
-          :rows="8"
-          readonly
-          class="font-mono text-sm"
-        />
-      </template>
+            <img
+              v-if="decoded.imagePreview"
+              :src="decoded.imagePreview"
+              alt="Data URI preview"
+              class="max-h-72 max-w-full rounded-lg border border-default object-contain"
+            >
+
+            <UTextarea
+              v-if="decoded.textPreview"
+              :model-value="decoded.textPreview"
+              :rows="8"
+              readonly
+              class="w-full font-mono text-sm"
+            />
+          </template>
+          <div
+            v-else
+            class="flex min-h-64 items-center justify-center rounded-lg border border-dashed border-default bg-default px-4 text-sm text-dimmed"
+          >
+            暂无结果
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>

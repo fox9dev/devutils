@@ -160,7 +160,7 @@ function loadSample() {
       <div
         v-for="row in componentRows"
         :key="row.label"
-        class="rounded-lg border border-default bg-elevated p-3"
+        class="min-w-0 rounded-lg border border-default bg-elevated p-3"
       >
         <div class="text-xs text-dimmed">
           {{ row.label }}
@@ -227,7 +227,7 @@ function loadSample() {
     </div>
 
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <div class="flex flex-col gap-2">
+      <div class="flex min-w-0 flex-col gap-2">
         <div class="flex items-center justify-between">
           <label class="text-sm font-medium text-muted">JSON</label>
           <Copy
@@ -242,7 +242,7 @@ function loadSample() {
           class="font-mono text-sm"
         />
       </div>
-      <div class="flex flex-col gap-2">
+      <div class="flex min-w-0 flex-col gap-2">
         <div class="flex items-center justify-between">
           <label class="text-sm font-medium text-muted">重建 Query String</label>
           <Copy

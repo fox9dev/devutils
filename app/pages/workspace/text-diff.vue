@@ -97,8 +97,8 @@ console.log(greeting, result);`
     <Note title="对比两段文本差异，增加的内容以绿色显示，删除的内容以红色显示。" />
 
     <!-- 输入区：双栏 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="flex flex-col gap-2">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div class="flex min-w-0 flex-col gap-2">
         <label class="text-sm font-medium text-muted">原始文本</label>
         <UTextarea
           v-model="original"
@@ -107,7 +107,7 @@ console.log(greeting, result);`
           :maxrows="20"
         />
       </div>
-      <div class="flex flex-col gap-2">
+      <div class="flex min-w-0 flex-col gap-2">
         <label class="text-sm font-medium text-muted">修改后文本</label>
         <UTextarea
           v-model="modified"
@@ -155,7 +155,7 @@ console.log(greeting, result);`
     </div>
 
     <!-- 差异结果 -->
-    <div class="flex flex-col gap-2">
+    <div class="flex min-w-0 flex-col gap-2">
       <label class="text-sm font-medium text-muted">
         对比结果
         <span

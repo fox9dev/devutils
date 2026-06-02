@@ -189,94 +189,103 @@ function clear() {
       </label>
     </div>
 
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-muted">测试文本</label>
-      <UTextarea
-        v-model="testText"
-        :rows="6"
-        placeholder="输入要测试的文本..."
-        class="font-mono text-sm"
-      />
-    </div>
+    <ToolTextSplit>
+      <template #input>
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium text-muted">测试文本</label>
+          <UTextarea
+            v-model="testText"
+            :rows="8"
+            placeholder="输入要测试的文本..."
+            class="font-mono text-sm"
+          />
+        </div>
+      </template>
 
-    <div class="flex flex-wrap items-center gap-2">
-      <UButton
-        variant="ghost"
-        color="error"
-        icon="lucide:trash-2"
-        @click="clear"
-      >
-        清空
-      </UButton>
-      <Copy :text="regexString" />
-      <span class="text-sm text-muted">
-        匹配数：<strong class="text-default">{{ matches.length }}</strong>
-      </span>
-    </div>
-
-    <div
-      v-if="testText"
-      class="flex flex-col gap-2"
-    >
-      <label class="text-sm font-medium text-muted">匹配高亮</label>
-      <div
-        class="min-h-[100px] rounded-lg border border-default bg-elevated p-4 font-mono text-sm leading-relaxed whitespace-pre-wrap"
-      >
-        <template
-          v-for="(part, index) in highlightedParts"
-          :key="index"
-        >
-          <mark
-            v-if="part.matched"
-            :class="[part.colorClass, 'rounded px-0.5']"
-          >{{ part.text }}</mark>
-          <span v-else>{{ part.text }}</span>
-        </template>
-      </div>
-    </div>
-
-    <div
-      v-if="matches.length"
-      class="flex flex-col gap-2"
-    >
-      <label class="text-sm font-medium text-muted">匹配详情</label>
-      <div class="rounded-lg border border-default bg-elevated divide-y divide-default">
-        <div
-          v-for="(m, i) in matches"
-          :key="i"
-          class="p-3 text-sm font-mono"
-        >
-          <div class="flex items-center gap-3">
-            <span class="text-muted">#{{ i + 1 }}</span>
-            <span class="text-default font-medium">"{{ m.match }}"</span>
-            <span class="text-dimmed text-xs">index: {{ m.index }}</span>
-          </div>
-          <div
-            v-if="m.groups.length"
-            class="mt-1 flex flex-wrap gap-2"
+      <template #actions>
+        <div class="flex flex-wrap items-center gap-2">
+          <UButton
+            variant="ghost"
+            color="error"
+            icon="lucide:trash-2"
+            @click="clear"
           >
-            <span
-              v-for="(g, gi) in m.groups"
-              :key="gi"
-              class="text-xs bg-primary-500/10 text-primary-600 dark:text-primary-400 rounded px-1.5 py-0.5"
-            >
-              ${{ gi + 1 }}: "{{ g }}"
-            </span>
-          </div>
+            清空
+          </UButton>
+          <Copy :text="regexString" />
+          <span class="text-sm text-muted">
+            匹配数：<strong class="text-default">{{ matches.length }}</strong>
+          </span>
+        </div>
+      </template>
+
+      <template #output>
+        <div class="flex min-w-0 flex-col gap-4">
           <div
-            v-if="Object.keys(m.namedGroups).length"
-            class="mt-1 flex flex-wrap gap-2"
+            class="flex flex-col gap-2"
           >
-            <span
-              v-for="(val, key) in m.namedGroups"
-              :key="key"
-              class="text-xs bg-green-500/10 text-green-600 dark:text-green-400 rounded px-1.5 py-0.5"
+            <label class="text-sm font-medium text-muted">匹配高亮</label>
+            <div
+              class="min-h-[132px] overflow-x-auto rounded-lg border border-default bg-elevated p-4 font-mono text-sm leading-relaxed whitespace-pre-wrap break-all"
             >
-              {{ key }}: "{{ val }}"
-            </span>
+              <template
+                v-for="(part, index) in highlightedParts"
+                :key="index"
+              >
+                <mark
+                  v-if="part.matched"
+                  :class="[part.colorClass, 'rounded px-0.5']"
+                >{{ part.text }}</mark>
+                <span v-else>{{ part.text }}</span>
+              </template>
+            </div>
+          </div>
+
+          <div
+            v-if="matches.length"
+            class="flex flex-col gap-2"
+          >
+            <label class="text-sm font-medium text-muted">匹配详情</label>
+            <div class="rounded-lg border border-default bg-elevated divide-y divide-default">
+              <div
+                v-for="(m, i) in matches"
+                :key="i"
+                class="p-3 text-sm font-mono"
+              >
+                <div class="flex flex-wrap items-center gap-3">
+                  <span class="text-muted">#{{ i + 1 }}</span>
+                  <span class="break-all text-default font-medium">"{{ m.match }}"</span>
+                  <span class="text-dimmed text-xs">index: {{ m.index }}</span>
+                </div>
+                <div
+                  v-if="m.groups.length"
+                  class="mt-1 flex flex-wrap gap-2"
+                >
+                  <span
+                    v-for="(g, gi) in m.groups"
+                    :key="gi"
+                    class="text-xs bg-primary-500/10 text-primary-600 dark:text-primary-400 rounded px-1.5 py-0.5"
+                  >
+                    ${{ gi + 1 }}: "{{ g }}"
+                  </span>
+                </div>
+                <div
+                  v-if="Object.keys(m.namedGroups).length"
+                  class="mt-1 flex flex-wrap gap-2"
+                >
+                  <span
+                    v-for="(val, key) in m.namedGroups"
+                    :key="key"
+                    class="text-xs bg-green-500/10 text-green-600 dark:text-green-400 rounded px-1.5 py-0.5"
+                  >
+                    {{ key }}: "{{ val }}"
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </template>
+    </ToolTextSplit>
   </div>
 </template>

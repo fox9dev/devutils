@@ -172,77 +172,83 @@ const referenceEntities = [
       title="命名实体：可读性好（如 &amp;amp;）；数字实体：兼容性好（如 &amp;#38;）"
     />
 
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-muted">输入</label>
-      <UTextarea
-        v-model="input"
-        :rows="8"
-        placeholder="输入要编码或解码的文本..."
-        class="font-mono text-sm"
-      />
-    </div>
+    <ToolTextSplit>
+      <template #input>
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium text-muted">输入</label>
+          <UTextarea
+            v-model="input"
+            :rows="8"
+            placeholder="输入要编码或解码的文本..."
+            class="font-mono text-sm"
+          />
+        </div>
+      </template>
 
-    <!-- 操作栏 -->
-    <div class="flex flex-wrap items-center gap-2">
-      <SegmentControl
-        v-model="entityMode"
-        :options="[
-          { label: '命名实体', value: 'named' as EntityMode },
-          { label: '数字实体', value: 'numeric' as EntityMode }
-        ]"
-      />
-      <UButton
-        icon="lucide:play"
-        color="success"
-        @click="encode"
-      >
-        编码
-      </UButton>
-      <UButton
-        color="warning"
-        icon="lucide:package-open"
-        @click="decode"
-      >
-        解码
-      </UButton>
-      <UButton
-        variant="ghost"
-        icon="lucide:arrow-up-down"
-        color="secondary"
-        @click="switchValue"
-      >
-        交换
-      </UButton>
-      <UButton
-        variant="ghost"
-        color="error"
-        icon="lucide:trash-2"
-        @click="clear"
-      >
-        清空
-      </UButton>
-      <Copy :text="output" />
-    </div>
+      <template #actions>
+        <div class="flex flex-wrap items-center gap-2">
+          <SegmentControl
+            v-model="entityMode"
+            :options="[
+              { label: '命名实体', value: 'named' as EntityMode },
+              { label: '数字实体', value: 'numeric' as EntityMode }
+            ]"
+          />
+          <UButton
+            icon="lucide:play"
+            color="success"
+            @click="encode"
+          >
+            编码
+          </UButton>
+          <UButton
+            color="warning"
+            icon="lucide:package-open"
+            @click="decode"
+          >
+            解码
+          </UButton>
+          <UButton
+            variant="ghost"
+            icon="lucide:arrow-up-down"
+            color="secondary"
+            @click="switchValue"
+          >
+            交换
+          </UButton>
+          <UButton
+            variant="ghost"
+            color="error"
+            icon="lucide:trash-2"
+            @click="clear"
+          >
+            清空
+          </UButton>
+          <Copy :text="output" />
+        </div>
+      </template>
 
-    <!-- 输出 -->
-    <div class="flex flex-col gap-2">
-      <label class="text-sm font-medium text-muted">
-        输出
-        <span
-          v-if="error"
-          class="text-sm text-error"
-        >
-          {{ error }}
-        </span>
-      </label>
-      <UTextarea
-        v-model="output"
-        :rows="8"
-        placeholder="处理结果"
-        readonly
-        class="font-mono text-sm"
-      />
-    </div>
+      <template #output>
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium text-muted">
+            输出
+            <span
+              v-if="error"
+              class="text-sm text-error"
+            >
+              {{ error }}
+            </span>
+          </label>
+          <UTextarea
+            v-model="output"
+            :rows="8"
+            placeholder="处理结果"
+            readonly
+            class="font-mono text-sm"
+          />
+        </div>
+      </template>
+    </ToolTextSplit>
 
     <!-- 常用实体参考 -->
     <div class="flex flex-col gap-2">
