@@ -226,7 +226,7 @@ function clear() {
           >
             <label class="text-sm font-medium text-muted">匹配高亮</label>
             <div
-              class="min-h-[132px] overflow-x-auto rounded-lg border border-default bg-elevated p-4 font-mono text-sm leading-relaxed whitespace-pre-wrap break-all"
+              class="min-h-33 overflow-x-auto rounded-lg border border-default bg-elevated p-4 font-mono text-sm leading-relaxed whitespace-pre-wrap break-all"
             >
               <template
                 v-for="(part, index) in highlightedParts"
